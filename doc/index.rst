@@ -34,5 +34,7 @@ bug reports and feature requests on our
    :maxdepth: 2
 
    Home <self>
+   WritingNotebooks/intro
+
 
    Github source <https://github.com/SciTools/cube_browser>
