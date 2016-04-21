@@ -1,9 +1,9 @@
-.. HoloCube documentation master file
+.. Cube Browser documentation master file
 
 Introduction
 ____________
 
-.. notebook:: holocube Homepage.ipynb
+.. notebook:: cube_browser Homepage.ipynb
 
 ------------
 
