@@ -19,12 +19,12 @@ Once you have chosen your element, you can plot in two primary ways:
 
 1. You can choose you axes dimensions and plot like this::
 
-    plot = hc.HoloCube(cube)
+    plot = hv.Dataset(cube)
     plot.to.image(['grid_longitude', 'grid_latitude'])
     
 2. You can choose the dimension which you would like to scroll through like this::
 
-    hc.HoloCube(cube).groupby(['time'], group_type=hc.Image)
+    hv.Dataset(cube).groupby(['time'], group_type=gv.Image)
     
 Either way is valid, but the number of dimensions on your cube and which of 
 those you would like your plot to scroll through may influence which method 

@@ -28,9 +28,7 @@ normal plotting module (i.e. matplotlib).  Further information about how you
 can find the options that are available to you are described in the next page 
 (`Help Options`)
 
-
-
-
+.. _`Help Options`: help
 
 Line magics apply to an entire notebook and are denoted by the % symbol, and 
 cell magics apply to a single cell and are denoted by %%.  Cell magics will 
