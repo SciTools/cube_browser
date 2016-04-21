@@ -1,8 +1,5 @@
 .. HoloCube documentation master file
 
-.. raw:: html
-
-
 Introduction
 ____________
 
@@ -35,6 +32,6 @@ bug reports and feature requests on our
 
    Home <self>
    WritingNotebooks/intro
-
+   developingCubeBrowsers/intro
 
    Github source <https://github.com/SciTools/cube_browser>
