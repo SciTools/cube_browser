@@ -9,10 +9,10 @@ paths = ['../param/', '.', '..']
 add_paths(paths)
 
 # # General information about the project.
-project = u'HoloCube'
-copyright = u'2016, HoloCube developers'
-authors = u'HoloCube developers'
-module = 'holocube'
+project = u'CubeBrowser'
+copyright = u'2016, CubeBrowser developers'
+authors = u'CubeBrowser developers'
+module = 'cube_browser'
 description = 'Browser based exploration of Iris cubes'
 
 
