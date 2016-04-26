@@ -33,5 +33,18 @@ list of available options will appear below the cell.
 Alternatively, you can use tab completion inside or outside parentheses to see 
 your options for using Magic. 
 
+Further Documentation
+---------------------
+
+You can find further information and documentation about HoloViews_ and 
+GeoViews_ on their websites:
+
+.. _HoloViews: http://holoviews.org/index.html
+
+.. _GeoViews: http://geo.holoviews.org/index.html
+
+http://holoviews.org/index.html
+
+http://geo.holoviews.org/
 
 
