@@ -7,7 +7,7 @@ The
 
 .. toctree::
    :titlesonly:
-   :maxdepth: 2
+   :maxdepth: 1
 
    Introduction <self>
    widgets
