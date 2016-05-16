@@ -4,30 +4,20 @@ Plotting Cubes
 This tutorial explains the first steps to working with Iris and Holoviews to 
 create a simple cube browser.
 
-Preparing the Plot
-------------------
+.. notebook:: holocube plotting_examples.ipynb
 
-First you must load the cube you wish to view, and pass this to Holocube to 
-make into a plot.
+.. note::
 
-To do this, you will need to decide on what type of plot you would like to make 
-(known as an Element_).
+    The 'dynamic' keyword is used to reduce your memory footprint.  
+    When dynamic=True, the notebook will only load the slice of data you are 
+    currently viewing, so each time you move a slider a new slice of data will 
+    be loaded.  This prevents the entire cube being loaded for each plot, but 
+    can cause complications with some plot types (such as hv.NdLayout, which 
+    requires mutliple slices at once).
 
-.. _Element: http://holoviews.org/Tutorials/Elements.html 
+You can access more in-depth tutorials and guidelines on plotting via the 
+Holoviews_ and Geoviews_ websites.
 
-Once you have chosen your element, you can plot in two primary ways:
-
-1. You can choose you axes dimensions and plot like this::
-
-    plot = hv.Dataset(cube)
-    plot.to.image(['grid_longitude', 'grid_latitude'])
-    
-2. You can choose the dimension which you would like to scroll through like this::
-
-    hv.Dataset(cube).groupby(['time'], group_type=gv.Image)
-    
-Either way is valid, but the number of dimensions on your cube and which of 
-those you would like your plot to scroll through may influence which method 
-you choose.
-
+.. _Holoviews: http://holoviews.org/index.html
+.. _Geoviews: http://geo.holoviews.org/index.html
 

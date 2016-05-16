@@ -20,11 +20,6 @@ information.
 
 Magic
 -----
-
-Sometimes you can hit problems with the syntax of Magic.  In this case you can 
-use this to get a doc string::
-
-    %%opts?
     
 If you are applying an option which requires a specific keyword argument, such 
 as cmap, and you enter a selection which is either incorrect or not available, a 
