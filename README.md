@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/SciTools/cube_browser.png?label=ready&title=Ready)](https://waffle.io/SciTools/cube_browser)
 Cube Browser
 ============
 
