@@ -118,8 +118,8 @@ class Contour(object):
 
         Kwargs:
 
-        kwargs for plot customization, see :func:`matplotlib.pyplot.contourf`
-        and :func:`iris.plot.contourf` for details of other valid keyword
+        kwargs for plot customization, see :func:`matplotlib.pyplot.contour`
+        and :func:`iris.plot.contour` for details of other valid keyword
         arguments.
         """
         self.cube = cube
