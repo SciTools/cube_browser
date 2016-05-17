@@ -5,7 +5,7 @@ class Contourf(object):
     """
     Constructs a filled contour plot instance of a cube.
 
-    An iris.plot.contourf instance is created using coordinates
+    An :func:`iris.plot.contourf` instance is created using coordinates
     specified in the input arguments as axes coordinates and turning the
     remaining dimension coordinates into interactive sliders.
 
@@ -14,10 +14,10 @@ class Contourf(object):
         """
         Args:
 
-        * cube: the iris.cube.Cube instance to plot
+        * cube: the :class:`~iris.cube.Cube` instance to plot
 
         * coords: the cube coordinate names or dimension indices to plot
-                       in the order (x-axis, y-axis)
+                  in the order (x-axis, y-axis)
 
         Kwargs:
 
