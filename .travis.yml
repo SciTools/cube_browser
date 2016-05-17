@@ -32,6 +32,7 @@ install:
   # ---------------------------------
   - conda config --add channels scitools
   - conda install iris=${iris}
+  - conda install ipywidgets
 
   # Download iris-test-data
   # -----------------------

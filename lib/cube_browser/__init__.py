@@ -1,3 +1,6 @@
+import IPython
+import ipywidgets
+import iris.plot as iplt
 import matplotlib.pyplot as plt
 
 
@@ -93,3 +96,48 @@ class Contourf(object):
                 available.append(self.cube.dim_coords[dim])
         return available
 
+
+class Browser(object):
+    """
+    Compiler for cube_browser plots and associated sliders.
+
+    Compiles a single cube_browser plot instance or list of instances into a
+    vertical arrangement of axes with shared coordinate sliders, to be
+    displayed in a Jupyter notebook.
+
+    """
+    def __init__(self, plot):
+        """
+        Compiles non-axis coordinates into sliders, the values from which are
+        used to reconstruct plots upon movement of slider.
+
+        Args:
+
+        * plot: cube_browser.Plot instance to display with slider
+
+        """
+        self.plot = plot
+        self._sliders = {}
+        for coord in plot.slider_coords():
+                slider = ipywidgets.IntSlider(min=0, max=coord.shape[0] - 1,
+                                              description=coord.name())
+                slider.observe(self.on_change, names='value')
+                self._sliders[coord.name()] = slider
+        self.form = ipywidgets.VBox()
+        self.form.children = self._sliders.values()
+        # This bit displays the slider and the plot.
+        self.on_change(None)
+        IPython.display.display(self.form)
+
+    def on_change(self, change):
+        """
+        Compiles mapping dictionary of slider values.
+
+        This dictionary is re-compiled upon each movement of a coordinate
+        slider, to be passed to plot call in order to reconstruct the plot.
+
+        """
+        slidermap = {}
+        for name, slider in self._sliders.items():
+            slidermap[name] = slider.value
+        self.plot(**slidermap)
