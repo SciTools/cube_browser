@@ -102,9 +102,9 @@ class Contourf(object):
 # with other plots
 class Contour(object):
     """
-    Constructs a filled contour plot instance of a cube.
+    Constructs a line contour plot instance of a cube.
 
-    An iris.plot.contourf instance is created using coordinates
+    An iris.plot.contour instance is created using coordinates
     specified in the input arguments as axes coordinates.
     """
     def __init__(self, cube, coords, **kwargs):
