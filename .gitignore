@@ -1,2 +1,8 @@
+*.py[co]
+
+# Created by editors
 *~
+\#*
+\.\#*
+*.swp
 *.ipynb_checkpoints*
