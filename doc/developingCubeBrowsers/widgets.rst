@@ -12,4 +12,4 @@ Examples of widgets in action:
    :titlesonly:
    :maxdepth: 1
 
-   filePicker
+   filePickerSimple

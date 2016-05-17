@@ -5,9 +5,6 @@ sys.path.insert(0, os.getcwd())
 
 from builder.shared_conf import * # noqa (API import)
 
-paths = ['../param/', '.', '..']
-add_paths(paths)
-
 # # General information about the project.
 project = u'CubeBrowser'
 copyright = u'2016, CubeBrowser developers'
@@ -76,17 +73,14 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None,
-                       'http://ipython.org/ipython-doc/2/': None,
-                       'http://ioam.github.io/param/': None}
+                       'http://ipython.org/ipython-doc/2/': None}
 
 js_includes = ['js/theme.js', 'bootstrap.js', 'custom.js', 'require.js']
 
-from builder.paramdoc import param_formatter
 from nbpublisher import nbbuild
 
 
 def setup(app):
-    app.connect('autodoc-process-docstring', param_formatter)
     for js in js_includes:
         app.add_javascript(js)
 
