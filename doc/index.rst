@@ -31,5 +31,7 @@ bug reports and feature requests on our
    Home <self>
    writingNotebooks/intro
    developingCubeBrowsers/intro
+   browsingCubes/intro
+   cube_browser/api
 
    Github source <https://github.com/SciTools/cube_browser>
