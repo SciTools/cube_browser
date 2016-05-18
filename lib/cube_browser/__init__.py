@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 # Cube-browser version.
 __version__ = '0.1.0-dev'
 
+# Restrict the names imported when using "from cube_browser import *".
+__all__ = ['Browser', 'Contourf']
+
 
 class Contourf(object):
     """
@@ -21,16 +24,19 @@ class Contourf(object):
         """
         Args:
 
-        * cube: the :class:`~iris.cube.Cube` instance to plot
+        * cube
+            The :class:`~iris.cube.Cube` instance to plot.
 
-        * coords: the cube coordinate names or dimension indices to plot
-                  in the order (x-axis, y-axis)
+        * coords
+            The cube coordinate names or dimension indices to plot
+            in the order (x-axis, y-axis).
 
         Kwargs:
 
         kwargs for plot customization, see :func:`matplotlib.pyplot.contourf`
         and :func:`iris.plot.contourf` for details of other valid keyword
         arguments.
+
         """
 
         self.cube = cube
@@ -54,8 +60,10 @@ class Contourf(object):
 
         Args:
 
-        * coord_values: mapping dictionary of coordinate name or dimension
-        index with value index at which to be sliced
+        * coord_values
+            Mapping dictionary of coordinate name or dimension index with
+            value index at which to be sliced.
+
         """
         index = [slice(None)] * self.cube.ndim
         for name, value in kwargs.items():
@@ -69,15 +77,16 @@ class Contourf(object):
 
     # XXX: #25: This function is a temporary measure for the one-axis, one-plot
     # scenario.  Multi-axes scenarios need to be handled soon.
-    def new_axes(self):
+    def new_axes(self):  # pragma: no cover
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection=cube.coord_system().
-                             as_cartopy_projection())
+        projection = self.cube.coord_system().as_cartopy_projection()
+        ax = fig.add_subplot(111, projection=projection)
         return ax
 
     def coord_dims(self):
         """
-        Compiles a mapping dictionary of dimension coordinates
+        Compiles a mapping dictionary of dimension coordinates.
+
         """
         mapping = {}
         for dim in range(self.cube.ndim):
@@ -88,12 +97,13 @@ class Contourf(object):
     def slider_coords(self):
         """
         Compiles a list of the dim coords not used on the plot axes, to be
-        used as slider coordinates
+        used as slider coordinates.
+
         """
         available = []
-        for dim in range(len(self.cube.dim_coords)):
-            if self.cube.dim_coords[dim].name() not in self.coords:
-                available.append(self.cube.dim_coords[dim])
+        for coord in self.cube.dim_coords:
+            if coord.name() not in self.coords:
+                available.append(coord)
         return available
 
 
@@ -113,7 +123,8 @@ class Browser(object):
 
         Args:
 
-        * plot: cube_browser.Plot instance to display with slider
+        * plot
+            The plot to display with slider.
 
         """
         self.plot = plot
