@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 
 
+# Cube-browser version.
+__version__ = '0.1.0-dev'
+
+
 class Contourf(object):
     """
     Constructs a filled contour plot instance of a cube.
