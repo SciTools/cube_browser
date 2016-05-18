@@ -7,17 +7,8 @@ import matplotlib.pyplot as plt
 # Cube-browser version.
 __version__ = '0.1.0-dev'
 
-
-# XXX: #26: Chunks of this to be moved to somewhere else as they are shared
-# with other plots
-class Contourf(object):
-    """
-    Constructs a filled contour plot instance of a cube.
-
-    An :func:`iris.plot.contourf` instance is created using coordinates
-    specified in the input arguments as axes coordinates.
-
-    """
+class Pyplot(object):
+    """"""
     def __init__(self, cube, coords, **kwargs):
         """
         Args:
@@ -29,9 +20,7 @@ class Contourf(object):
 
         Kwargs:
 
-        kwargs for plot customization, see :func:`matplotlib.pyplot.contourf`
-        and :func:`iris.plot.contourf` for details of other valid keyword
-        arguments.
+        kwargs for plot customization.
 
         """
 
@@ -43,38 +32,20 @@ class Contourf(object):
         # A mapping of 1d-coord name to dimension
         self.coord_dim = self.coord_dims()
 
-    # XXX: #24: coord_values is under review to be changed to a list or
-    # dictionary or something
-    # NOTE: Currently, Browser supplies a dictionary here.
-    def __call__(self, **coord_values):
-        """
-        Constructs a static plot of the cube sliced at the coordinates
-        specified in coord_values.
-
-        This is called once each time a slider position is moved, at which
-        point the new coordinate values are plotted.
-
-        Args:
-
-        * coord_values: mapping dictionary of coordinate name or dimension
-                        index with value index at which to be sliced.
-
-        """
+    def _get_slice(self, coord_values):
         index = [slice(None)] * self.cube.ndim
-        for name, value in kwargs.items():
+        for name, value in coord_values.items():
             if name in self.coord_dim:
                 index[self.coord_dim[name]] = value
         cube = self.cube[tuple(index)]
         plt.sca(self.axes)
-        self.qcs = iplt.contourf(cube, coords=self.coords,
-                                 axes=self.axes, **self.kwargs)
-        return plt.gca()
+        return cube
 
     # XXX: #25: This function is a temporary measure for the one-axis, one-plot
     # scenario.  Multi-axes scenarios need to be handled soon.
     def new_axes(self):
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection=cube.coord_system().
+        ax = fig.add_subplot(111, projection=self.cube.coord_system().
                              as_cartopy_projection())
         return ax
 
@@ -104,37 +75,17 @@ class Contourf(object):
 
 # XXX: #26: Chunks of this to be moved to somewhere else as they are shared
 # with other plots
-class Contour(object):
+class Contourf(Pyplot):
     """
-    Constructs a line contour plot instance of a cube.
+    Constructs a filled contour plot instance of a cube.
 
-    An :func:`iris.plot.contour` instance is created using coordinates
+    An :func:`iris.plot.contourf` instance is created using coordinates
     specified in the input arguments as axes coordinates.
 
+    See :func:`matplotlib.pyplot.contourf` and :func:`iris.plot.contourf`
+    for details of other valid keyword arguments
+
     """
-    def __init__(self, cube, coords, **kwargs):
-        """
-        Args:
-
-        * cube: the :class:`~iris.cube.Cube` instance to plot
-
-        * coords: the cube coordinate names or dimension indices to plot
-                  in the order (x-axis, y-axis)
-
-        Kwargs:
-
-        kwargs for plot customization, see :func:`matplotlib.pyplot.contour`
-        and :func:`iris.plot.contour` for details of other valid keyword
-        arguments.
-
-        """
-        self.cube = cube
-        self.coords = coords # coords to plot
-        self.kwargs = kwargs
-        self.axes = self.new_axes()
-        self.qcs = None  # QuadContourSet
-        # A mapping of 1d-coord name to dimension
-        self.coord_dim = self.coord_dims()
 
     # XXX: #24: coord_values is under review to be changed to a list or
     # dictionary or something
@@ -153,45 +104,48 @@ class Contour(object):
                         index with value index at which to be sliced.
 
         """
-        index = [slice(None)] * self.cube.ndim
-        for name, value in kwargs.items():
-            if name in self.coord_dim:
-                index[self.coord_dim[name]] = value
-        cube = self.cube[tuple(index)]
-        plt.sca(self.axes)
-        self.qcs = iplt.contour(cube, coords=self.coords, axes=self.axes, **self.kwargs)
+        cube = self._get_slice(coord_values)
+        self.qcs = iplt.contourf(cube, coords=self.coords,
+                                 axes=self.axes, **self.kwargs)
         return plt.gca()
 
-    # XXX: #25: This function is a temporary measure for the one-axis, one-plot
-    # scenario.  Multi-axes scenarios need to be handled soon.
-    def new_axes(self):
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection=cube.coord_system().
-                             as_cartopy_projection())
-        return ax
 
-    def coord_dims(self):
+
+# XXX: #26: Chunks of this to be moved to somewhere else as they are shared
+# with other plots
+class Contour(Pyplot):
+    """
+    Constructs a line contour plot instance of a cube.
+
+    An :func:`iris.plot.contour` instance is created using coordinates
+    specified in the input arguments as axes coordinates.
+
+    See :func:`matplotlib.pyplot.contour` and :func:`iris.plot.contour`
+    for details of other valid keyword arguments.
+
+    """
+
+    # XXX: #24: coord_values is under review to be changed to a list or
+    # dictionary or something
+    # NOTE: Currently, Browser supplies a dictionary here.
+    def __call__(self, **coord_values):
         """
-        Compiles a mapping dictionary of dimension coordinates.
+        Constructs a static plot of the cube sliced at the coordinates
+        specified in coord_values.
+
+        This is called once each time a slider position is moved, at which
+        point the new coordinate values are plotted.
+
+        Args:
+
+        * coord_values: mapping dictionary of coordinate name or dimension
+                        index with value index at which to be sliced.
 
         """
-        mapping = {}
-        for dim in range(self.cube.ndim):
-            coords = self.cube.coords(dimensions=(dim,))
-            mapping.update([(c.name(), dim) for c in coords])
-        return mapping
-
-    def slider_coords(self):
-        """
-        Compiles a list of the dim coords not used on the plot axes, to be
-        used as slider coordinates.
-
-        """
-        available = []
-        for dim in range(len(self.cube.dim_coords)):
-            if self.cube.dim_coords[dim].name() not in self.coords:
-                available.append(self.cube.dim_coords[dim])
-        return available
+        cube = self._get_slice(coord_values)
+        self.qcs = iplt.contour(cube, coords=self.coords,
+                                axes=self.axes, **self.kwargs)
+        return plt.gca()
 
 
 class Browser(object):
