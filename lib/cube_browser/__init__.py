@@ -14,7 +14,7 @@ class Contourf(object):
     """
     Constructs a filled contour plot instance of a cube.
 
-    An iris.plot.contourf instance is created using coordinates
+    An :func:`iris.plot.contourf` instance is created using coordinates
     specified in the input arguments as axes coordinates.
 
     """
@@ -22,16 +22,17 @@ class Contourf(object):
         """
         Args:
 
-        * cube: the iris.cube.Cube instance to plot
+        * cube: the :class:`~iris.cube.Cube` instance to plot
 
         * coords: the cube coordinate names or dimension indices to plot
-                       in the order (x-axis, y-axis)
+                  in the order (x-axis, y-axis)
 
         Kwargs:
 
         kwargs for plot customization, see :func:`matplotlib.pyplot.contourf`
         and :func:`iris.plot.contourf` for details of other valid keyword
         arguments.
+
         """
 
         self.cube = cube
@@ -56,7 +57,8 @@ class Contourf(object):
         Args:
 
         * coord_values: mapping dictionary of coordinate name or dimension
-        index with value index at which to be sliced
+                        index with value index at which to be sliced.
+
         """
         index = [slice(None)] * self.cube.ndim
         for name, value in kwargs.items():
@@ -78,7 +80,8 @@ class Contourf(object):
 
     def coord_dims(self):
         """
-        Compiles a mapping dictionary of dimension coordinates
+        Compiles a mapping dictionary of dimension coordinates.
+
         """
         mapping = {}
         for dim in range(self.cube.ndim):
@@ -89,7 +92,8 @@ class Contourf(object):
     def slider_coords(self):
         """
         Compiles a list of the dim coords not used on the plot axes, to be
-        used as slider coordinates
+        used as slider coordinates.
+
         """
         available = []
         for dim in range(len(self.cube.dim_coords)):
@@ -104,23 +108,25 @@ class Contour(object):
     """
     Constructs a line contour plot instance of a cube.
 
-    An iris.plot.contour instance is created using coordinates
+    An :func:`iris.plot.contour` instance is created using coordinates
     specified in the input arguments as axes coordinates.
+
     """
     def __init__(self, cube, coords, **kwargs):
         """
         Args:
 
-        * cube: the iris.cube.Cube instance to plot
+        * cube: the :class:`~iris.cube.Cube` instance to plot
 
         * coords: the cube coordinate names or dimension indices to plot
-                       in the order (x-axis, y-axis)
+                  in the order (x-axis, y-axis)
 
         Kwargs:
 
         kwargs for plot customization, see :func:`matplotlib.pyplot.contour`
         and :func:`iris.plot.contour` for details of other valid keyword
         arguments.
+
         """
         self.cube = cube
         self.coords = coords # coords to plot
@@ -144,7 +150,8 @@ class Contour(object):
         Args:
 
         * coord_values: mapping dictionary of coordinate name or dimension
-        index with value index at which to be sliced
+                        index with value index at which to be sliced.
+
         """
         index = [slice(None)] * self.cube.ndim
         for name, value in kwargs.items():
@@ -164,8 +171,9 @@ class Contour(object):
         return ax
 
     def coord_dims(self):
-       """
-        Compiles a mapping dictionary of dimension coordinates
+        """
+        Compiles a mapping dictionary of dimension coordinates.
+
         """
         mapping = {}
         for dim in range(self.cube.ndim):
@@ -176,7 +184,8 @@ class Contour(object):
     def slider_coords(self):
         """
         Compiles a list of the dim coords not used on the plot axes, to be
-        used as slider coordinates
+        used as slider coordinates.
+
         """
         available = []
         for dim in range(len(self.cube.dim_coords)):
@@ -201,7 +210,7 @@ class Browser(object):
 
         Args:
 
-        * plot: cube_browser.Plot instance to display with slider
+        * plot: cube_browser plot instance to display with slider
 
         """
         self.plot = plot
