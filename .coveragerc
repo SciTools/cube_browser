@@ -12,5 +12,6 @@ omit =
 [report]
 exclude_lines =
     pragma: no cover
+    pragma: no branch
     def __repr__
     if __name__ == .__main__.:
