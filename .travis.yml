@@ -31,8 +31,9 @@ install:
   # Customise the testing environment
   # ---------------------------------
   - conda config --add channels scitools
-  - conda install iris=${iris}
+  - conda install iris=${iris} pip
   - conda install ipywidgets
+  - pip install coveralls
 
   # Download iris-test-data
   # -----------------------
@@ -59,4 +60,6 @@ install:
 
 
 script:
-  - python setup.py test
+  - coverage run setup.py test
+
+after_success: coveralls
