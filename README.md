@@ -1,8 +1,7 @@
-[![Stories in Ready](https://badge.waffle.io/SciTools/cube_browser.png?label=ready&title=Ready)](https://waffle.io/SciTools/cube_browser)
 Cube Browser
 ============
 
-[![Build Status](https://secure.travis-ci.org/SciTools/cube_browser.png)](http://travis-ci.org/SciTools/cube_browser)
+[![Build Status](https://secure.travis-ci.org/SciTools/cube_browser.png)](http://travis-ci.org/SciTools/cube_browser) [![Stories in Ready](https://badge.waffle.io/SciTools/cube_browser.png?label=ready&title=Ready)](https://waffle.io/SciTools/cube_browser)
 
 Working with Jupyter Notebooks to interactively visualise Iris cubes.
 
