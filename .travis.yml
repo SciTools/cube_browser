@@ -58,4 +58,4 @@ install:
 
 
 script:
-  - python -m unittest discover -v -s lib/cube_browser/tests
+  - python setup.py test
