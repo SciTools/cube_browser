@@ -1,5 +1,7 @@
 *.py[co]
 
+lib/cube_browser.egg-info
+
 # Created by editors
 *~
 \#*
