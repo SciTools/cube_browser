@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 # Cube-browser version.
 __version__ = '0.1.0-dev'
 
+# Set default IPython magics if a notebook is called the import
+ipynb = IPython.get_ipython()
+if ipynb is not None:
+    ipynb.magic(u"%matplotlib notebook")
+    ipynb.magic(u"%autosave 0")
 
 class Pyplot(object):
     """"""
