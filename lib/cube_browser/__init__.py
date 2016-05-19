@@ -7,23 +7,25 @@ import matplotlib.pyplot as plt
 # Cube-browser version.
 __version__ = '0.1.0-dev'
 
+
 class Pyplot(object):
     """"""
     def __init__(self, cube, coords, **kwargs):
         """
         Args:
 
-        * cube: the :class:`~iris.cube.Cube` instance to plot
+        * cube
+            The :class:`~iris.cube.Cube` instance to plot.
 
-        * coords: the cube coordinate names or dimension indices to plot
-                  in the order (x-axis, y-axis)
+        * coords
+            The cube coordinate names or dimension indices to plot
+            in the order (x-axis, y-axis).
 
         Kwargs:
 
         kwargs for plot customization.
 
         """
-
         self.cube = cube
         self.coords = coords  # coords to plot as x, y
         self.kwargs = kwargs
@@ -43,10 +45,10 @@ class Pyplot(object):
 
     # XXX: #25: This function is a temporary measure for the one-axis, one-plot
     # scenario.  Multi-axes scenarios need to be handled soon.
-    def new_axes(self):
+    def new_axes(self):  # pragma: no cover
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection=self.cube.coord_system().
-                             as_cartopy_projection())
+        projection = self.cube.coord_system().as_cartopy_projection()
+        ax = fig.add_subplot(111, projection=projection)
         return ax
 
     def coord_dims(self):
@@ -67,9 +69,9 @@ class Pyplot(object):
 
         """
         available = []
-        for dim in range(len(self.cube.dim_coords)):
-            if self.cube.dim_coords[dim].name() not in self.coords:
-                available.append(self.cube.dim_coords[dim])
+        for coord in self.cube.dim_coords:
+            if coord.name() not in self.coords:
+                available.append(coord)
         return available
 
 
@@ -100,8 +102,9 @@ class Contourf(Pyplot):
 
         Args:
 
-        * coord_values: mapping dictionary of coordinate name or dimension
-                        index with value index at which to be sliced.
+        * coord_values
+            Mapping dictionary of coordinate name or dimension
+            index with value index at which to be sliced.
 
         """
         cube = self._get_slice(coord_values)
@@ -138,8 +141,9 @@ class Contour(Pyplot):
 
         Args:
 
-        * coord_values: mapping dictionary of coordinate name or dimension
-                        index with value index at which to be sliced.
+        * coord_values
+            Mapping dictionary of coordinate name or dimension
+            index with value index at which to be sliced.
 
         """
         cube = self._get_slice(coord_values)
@@ -164,7 +168,8 @@ class Browser(object):
 
         Args:
 
-        * plot: cube_browser plot instance to display with slider
+        * plot
+            cube_browser plot instance to display with slider.
 
         """
         self.plot = plot
