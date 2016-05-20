@@ -35,7 +35,6 @@ class Pyplot(object):
         self.coords = coords  # coords to plot as x, y
         self.kwargs = kwargs
         self.axes = self.new_axes()
-        self.qcs = None  # QuadContourSet
         # A mapping of 1d-coord name to dimension
         self.coord_dim = self.coord_dims()
 
@@ -113,6 +112,7 @@ class Contourf(Pyplot):
 
         """
         cube = self._get_slice(coord_values)
+        # Add QuadContourSet to self
         self.qcs = iplt.contourf(cube, coords=self.coords,
                                  axes=self.axes, **self.kwargs)
         return plt.gca()
@@ -152,6 +152,7 @@ class Contour(Pyplot):
 
         """
         cube = self._get_slice(coord_values)
+        # Add QuadContourSet to self
         self.qcs = iplt.contour(cube, coords=self.coords,
                                 axes=self.axes, **self.kwargs)
         return plt.gca()
@@ -188,9 +189,8 @@ class Pcolormesh(Pyplot):
 
         """
         cube = self._get_slice(coord_values)
-        # XXX: This uses a QuadMesh, not a QuadContourSet.
-        # Do I change this here?
-        self.qcs = iplt.pcolormesh(cube, coords=self.coords,
+        # Add QuadMesh to self
+        self.qm = iplt.pcolormesh(cube, coords=self.coords,
                                 axes=self.axes, **self.kwargs)
         return plt.gca()
 
