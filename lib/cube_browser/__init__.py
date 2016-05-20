@@ -157,6 +157,44 @@ class Contour(Pyplot):
         return plt.gca()
 
 
+class Pcolormesh(Pyplot):
+    """
+    Constructs a pseduocolour plot instance of a cube on a quadrilateral mesh.
+
+    An :func:`iris.plot.pcolormesh` instance is created using coordinates
+    specified in the input arguments as axes coordinates.
+
+    See :func:`matplotlib.pyplot.pcolormesh` and :func:`iris.plot.pcolormesh`
+    for details of other valid keyword arguments.
+
+    """
+
+    # XXX: #24: coord_values is under review to be changed to a list or
+    # dictionary or something
+    # NOTE: Currently, Browser supplies a dictionary here.
+    def __call__(self, **coord_values):
+        """
+        Constructs a static plot of the cube sliced at the coordinates
+        specified in coord_values.
+
+        This is called once each time a slider position is moved, at which
+        point the new coordinate values are plotted.
+
+        Args:
+
+        * coord_values
+            Mapping dictionary of coordinate name or dimension
+            index with value index at which to be sliced.
+
+        """
+        cube = self._get_slice(coord_values)
+        # XXX: This uses a QuadMesh, not a QuadContourSet.
+        # Do I change this here?
+        self.qcs = iplt.pcolormesh(cube, coords=self.coords,
+                                axes=self.axes, **self.kwargs)
+        return plt.gca()
+
+
 class Browser(object):
     """
     Compiler for cube_browser plots and associated sliders.
