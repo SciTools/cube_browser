@@ -9,7 +9,7 @@ import iris.tests as tests
 from iris.tests.stock import realistic_3d
 
 from cartopy.mpl.geoaxes import GeoAxesSubplot
-from matplotlib.pcolormesh import QuadMesh
+from matplotlib.collections import QuadMesh
 from cube_browser import Pcolormesh
 
 
