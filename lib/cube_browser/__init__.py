@@ -15,7 +15,7 @@ if ipynb is not None:
 
 class Pyplot(object):
     """"""
-    def __init__(self, cube, coords, **kwargs):
+    def __init__(self, cube, coords, axes, **kwargs):
         """
         Args:
 
@@ -34,7 +34,8 @@ class Pyplot(object):
         self.cube = cube
         self.coords = coords  # coords to plot as x, y
         self.kwargs = kwargs
-        self.axes = self.new_axes()
+        # type check, is this a matplotlib axes:
+        self.axes = axes
         # A mapping of 1d-coord name to dimension
         self.coord_dim = self.coord_dims()
 
@@ -46,14 +47,6 @@ class Pyplot(object):
         cube = self.cube[tuple(index)]
         plt.sca(self.axes)
         return cube
-
-    # XXX: #25: This function is a temporary measure for the one-axis, one-plot
-    # scenario.  Multi-axes scenarios need to be handled soon.
-    def new_axes(self):  # pragma: no cover
-        fig = plt.figure()
-        projection = self.cube.coord_system().as_cartopy_projection()
-        ax = fig.add_subplot(111, projection=projection)
-        return ax
 
     def coord_dims(self):
         """

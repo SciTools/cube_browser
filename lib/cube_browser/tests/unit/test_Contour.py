@@ -10,6 +10,8 @@ from iris.tests.stock import realistic_3d
 
 from cartopy.mpl.geoaxes import GeoAxesSubplot
 from matplotlib.contour import QuadContourSet
+import matplotlib.pyplot as plt
+
 from cube_browser import Contour
 
 
@@ -20,9 +22,12 @@ class Test__call__(tests.IrisTest):
                         'grid_latitude')  # plot axis coordinates.
 
     def test_plot_type(self):
-        cf = Contour(self.cube, self.pcoords)
-        ax = cf(time=0)
-        self.assertTrue(isinstance(ax, GeoAxesSubplot))
+        fig = plt.figure()
+        projection = self.cube.coord_system().as_cartopy_projection()
+        ax = fig.add_subplot(111, projection=projection)
+        cf = Contour(self.cube, self.pcoords, ax)
+        return_ax = cf(time=0)
+        self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
         self.assertTrue(isinstance(cf.qcs, QuadContourSet))
 
 if __name__ == '__main__':
