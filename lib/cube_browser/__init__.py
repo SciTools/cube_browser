@@ -1,5 +1,10 @@
+from __future__ import (absolute_import, division, print_function)
+from six.moves import (filter, input, map, range, zip)  # noqa
+import six
+
 import IPython
 import ipywidgets
+from iris.coords import Coord
 import iris.plot as iplt
 import matplotlib.pyplot as plt
 
@@ -13,31 +18,133 @@ if ipynb is not None:
     ipynb.magic(u"%matplotlib notebook")
     ipynb.magic(u"%autosave 0")
 
+
 class Pyplot(object):
     """"""
-    def __init__(self, cube, axes, coords, **kwargs):
+    def __init__(self, cube, axes, **kwargs):
         """
         Args:
 
         * cube
             The :class:`~iris.cube.Cube` instance to plot.
 
-        * coords
-            The cube coordinate names or dimension indices to plot
-            in the order (x-axis, y-axis).
+        * axes
+            Matplotlib axes for plotting.
 
         Kwargs:
 
-        kwargs for plot customization.
+        * coords
+            The cube coordinates, coordinate names or dimension indices
+            to plot in the order (x-axis, y-axis).
+
+        * kwargs
+            Matplotlib kwargs for plot customization.
 
         """
         self.cube = cube
-        self.coords = coords  # coords to plot as x, y
-        self.kwargs = kwargs
-        # type check, is this a matplotlib axes:
+        if cube.ndim < 2:
+            emsg = '{} requires at least a 2d cube, got {}d.'
+            raise ValueError(emsg.format(type(self).__name__, cube.ndim))
         self.axes = axes
+        # Coordinates/dimensions to use for the plot x-axis, y-axis.
+        coords = kwargs.pop('coords', None)
+        if coords is None:
+            coords = self._default_coords()
+        self.coords = self._check_coords(coords)
+        self.kwargs = kwargs
         # A mapping of 1d-coord name to dimension
         self.coord_dim = self.coord_dims()
+
+    def _default_coords(self):
+        """
+        Determines the default coordinates or cube dimensions to use
+        for the plot x-axis and y-axis.
+
+        Firstly, will attempt to default to the 'X' and 'Y' dimension
+        coordinates, but only if both exist on the cube.
+
+        Otherwise, default to the last two cube dimensions, assuming
+        the last two cube dimensions are in y-axis, x-axis order i.e.
+        the x-axis is the last cube dimension.
+
+        Returns a tuple of the chosen coordinates/dimensions.
+
+        """
+        xcoord = self.cube.coords(axis='x', dim_coords=True)
+        ycoord = self.cube.coords(axis='y', dim_coords=True)
+        if xcoord and ycoord:
+            # Default to the cube X and Y dimension coordinates.
+            coords = (xcoord[0], ycoord[0])
+        else:
+            # Default to the last two cube dimensions in ydim, xdim order.
+            ndim = self.cube.ndim
+            xdim, ydim = ndim - 1, ndim - 2
+            xcoord = self.cube.coords(dimensions=(xdim,), dim_coords=True)
+            xcoord = xcoord[0] if xcoord else xdim
+            ycoord = self.cube.coords(dimensions=(ydim,), dim_coords=True)
+            ycoord = ycoord[0] if not ycoord else ydim
+            coords = (xcoord, ycoord)
+        return coords
+
+    def _check_coords(self, coords):
+        """
+        Verify the two coordinates/dimensions specified to use for the plot
+        x-axis and y-axis.
+
+        Ensures that explicit cube dimension values are suitably translated
+        for use with the target 2d cube.
+
+        Returns a list of the verified coordinates/dimensions.
+
+        """
+        result = []
+        dims = []
+        translate = False
+        if isinstance(coords, (six.string_types, int)):
+            coords = (coords,)
+        if len(coords) != 2:
+            emsg = '{} requires 2 coordinates, one for each plot axis, got {}.'
+            raise ValueError(emsg.format(type(self).__name__, len(coords)))
+        ndim = self.cube.ndim
+        for i, (coord, axis) in enumerate(zip(coords, ['x', 'y'])):
+            if isinstance(coord, int):
+                if coord < 0:
+                    coord = ndim + coord
+                if coord < 0 or coord >= ndim:
+                    emsg = 'Nominated {}-axis plot dimension for {}d cube ' \
+                        'out of range, got {}.'
+                    raise IndexError(emsg.format(axis, ndim, coords[i]))
+                result.append(coord)
+                dims.append(coord)
+                translate = True
+            else:
+                cube_coord = self.cube.coords(coord)
+                if len(cube_coord) == 0:
+                    name = coord.name() if isinstance(coord, Coord) else coord
+                    emsg = 'Nominated {}-axis plot coordinate {!r} not ' \
+                        'found on cube.'
+                    raise ValueError(emsg.format(axis, name))
+                [coord] = cube_coord
+                if coord.ndim != 1:
+                    emsg = 'Nominated {}-axis plot coordinate {!r} must be ' \
+                        '1d, got {}d.'
+                    raise ValueError(emsg.format(axis, coord.name(),
+                                                 coord.ndim))
+                result.append(coord)
+                dims.append(self.cube.coord_dims(coord)[0])
+        if dims[0] == dims[1]:
+            emsg = 'Nominated x-axis and y-axis reference the same cube ' \
+                'dimension, got {}.'
+            raise ValueError(emsg.format(dims[0]))
+        if translate:
+            if dims[0] < dims[1]:
+                dims = [0, 1]
+            else:
+                dims = [1, 0]
+            for i, (r, d) in enumerate(zip(result, dims)):
+                if isinstance(r, int):
+                    result[i] = d
+        return result
 
     def _get_slice(self, coord_values):
         index = [slice(None)] * self.cube.ndim
@@ -109,7 +216,6 @@ class Contourf(Pyplot):
         self.qcs = iplt.contourf(cube, coords=self.coords,
                                  axes=self.axes, **self.kwargs)
         return plt.gca()
-
 
 
 # XXX: #26: Chunks of this to be moved to somewhere else as they are shared
@@ -184,7 +290,7 @@ class Pcolormesh(Pyplot):
         cube = self._get_slice(coord_values)
         # Add QuadMesh to self
         self.qm = iplt.pcolormesh(cube, coords=self.coords,
-                                axes=self.axes, **self.kwargs)
+                                  axes=self.axes, **self.kwargs)
         return plt.gca()
 
 
