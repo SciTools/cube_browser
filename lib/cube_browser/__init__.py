@@ -332,7 +332,6 @@ class Browser(object):
         self.form = ipywidgets.VBox()
         self.form.children = self._sliders.values()
         # This bit displays the slider and the plot.
-        self.setup = False
         self.on_change(None)
         IPython.display.display(self.form)
 
