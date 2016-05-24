@@ -18,9 +18,11 @@ def handle_path(sender):
     options = glob.glob('{}/*'.format(path.value))
     options.sort()
     files.options = options
-# path is the widget which i want to observe
-# the first argument is the function to run on 'event'
+# 'path' is the widget which i want to observe:
+# the first argument is the function to run on 'event',
 # names is the thing that i want know about, within path
+# the value.  'handle_path' is the resulting process,
+# which runs when paths changes.
 path.observe(handle_path, names='value')
 
 # Use default path value to initialise file options.
@@ -39,7 +41,8 @@ load_button = ipywidgets.Button(description="Load these Files!")
 # Define load button action
 def handle_load(sender):
     cubes = iris.load(files.value)
-    cube_picker.options = dict([(cube.summary(shorten=True), cube) for cube in cubes])
+    cube_picker.options = dict([(cube.summary(shorten=True), cube) for
+                                cube in cubes])
 load_button.on_click(handle_load)
 
 # Widget for cube description; currently non-functional:
