@@ -430,6 +430,8 @@ class Browser(object):
         self.form.children = self._sliders.values()
         # This bit displays the slider and the plot.
         self.on_change(None)
+
+    def display(self):
         IPython.display.display(self.form)
 
     # def _build_mappings(self):
