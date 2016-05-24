@@ -27,10 +27,11 @@ class Test__call__(tests.IrisTest):
         fig = plt.figure()
         projection = iris.plot.default_projection(self.cube)
         ax = fig.add_subplot(111, projection=projection)
-        pcm = Pcolormesh(self.cube, ax, self.pcoords)
+        pcm = Pcolormesh(self.cube, ax, coords=self.pcoords)
         return_ax = pcm(time=0)
         self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
         self.assertTrue(isinstance(pcm.qm, QuadMesh))
+
 
 if __name__ == '__main__':
     tests.main()

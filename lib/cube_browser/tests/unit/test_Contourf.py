@@ -25,10 +25,11 @@ class Test__call__(tests.IrisTest):
         fig = plt.figure()
         projection = iris.plot.default_projection(self.cube)
         ax = fig.add_subplot(111, projection=projection)
-        cf = Contourf(self.cube, ax, self.pcoords)
+        cf = Contourf(self.cube, ax, coords=self.pcoords)
         return_ax = cf(time=0)
         self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
         self.assertTrue(isinstance(cf.qcs, QuadContourSet))
+
 
 if __name__ == '__main__':
     tests.main()

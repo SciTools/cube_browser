@@ -20,7 +20,6 @@ if ipynb is not None:
 
 
 class Pyplot(object):
-    """"""
     def __init__(self, cube, axes, **kwargs):
         """
         Args:
@@ -82,7 +81,7 @@ class Pyplot(object):
             xcoord = self.cube.coords(dimensions=(xdim,), dim_coords=True)
             xcoord = xcoord[0] if xcoord else xdim
             ycoord = self.cube.coords(dimensions=(ydim,), dim_coords=True)
-            ycoord = ycoord[0] if not ycoord else ydim
+            ycoord = ycoord[0] if ycoord else ydim
             coords = (xcoord, ycoord)
         return coords
 
@@ -125,26 +124,25 @@ class Pyplot(object):
                         'found on cube.'
                     raise ValueError(emsg.format(axis, name))
                 [coord] = cube_coord
-                if coord.ndim != 1:
+                dim = self.cube.coord_dims(coord)
+                if len(dim) != 1:
                     emsg = 'Nominated {}-axis plot coordinate {!r} must be ' \
                         '1d, got {}d.'
-                    raise ValueError(emsg.format(axis, coord.name(),
-                                                 coord.ndim))
+                    raise ValueError(emsg.format(axis, coord.name(), len(dim)))
                 result.append(coord)
-                dims.append(self.cube.coord_dims(coord)[0])
+                dims.append(dim[0])
         if dims[0] == dims[1]:
             emsg = 'Nominated x-axis and y-axis reference the same cube ' \
                 'dimension, got {}.'
             raise ValueError(emsg.format(dims[0]))
         if translate:
-            if dims[0] < dims[1]:
-                dims = [0, 1]
-            else:
-                dims = [1, 0]
+            # Ensure explicit dimension values are suitably translated
+            # for use with the target 2d cube.
+            dims = [0, 1] if dims[0] < dims[1] else [1, 0]
             for i, (r, d) in enumerate(zip(result, dims)):
                 if isinstance(r, int):
                     result[i] = d
-        return result
+        return tuple(result)
 
     def _get_slice(self, coord_values):
         index = [slice(None)] * self.cube.ndim
@@ -174,7 +172,7 @@ class Pyplot(object):
         """
         available = []
         for coord in self.cube.dim_coords:
-            if coord.name() not in self.coords:
+            if coord not in self.coords:
                 available.append(coord)
         return available
 
