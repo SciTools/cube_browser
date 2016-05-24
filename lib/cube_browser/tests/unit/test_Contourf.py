@@ -29,6 +29,9 @@ class Test__call__(tests.IrisTest):
         return_ax = cf(time=0)
         self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
         self.assertTrue(isinstance(cf.element, QuadContourSet))
+        update_ax = cf(time=1)
+        self.assertTrue(isinstance(update_ax, GeoAxesSubplot))
+        self.assertTrue(isinstance(cf.element, QuadContourSet))
 
 
 if __name__ == '__main__':
