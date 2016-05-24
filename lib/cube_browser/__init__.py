@@ -392,6 +392,13 @@ class Pcolormesh(Pyplot):
         # Add QuadMesh to self as self.element
         self.element = iplt.pcolormesh(cube, coords=self.coords,
                                        axes=self.axes, **self.kwargs)
+        for cname in self.coords:
+            coord = cube.coord(cname)
+            if len(coord.points) > 1 and not coord.has_bounds():
+                coord.guess_bounds()
+        # Add QuadMesh to self
+        self.qm = iplt.pcolormesh(cube, coords=self.coords,
+                                  axes=self.axes, **self.kwargs)
         return plt.gca()
 
 
