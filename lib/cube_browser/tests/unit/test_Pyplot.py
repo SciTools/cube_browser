@@ -7,6 +7,7 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 import iris.tests as tests
 
 from iris.tests.stock import realistic_3d
+import matplotlib.pyplot as plt
 
 from cube_browser import Pyplot
 
@@ -16,9 +17,13 @@ class Test_coord_dims(tests.IrisTest):
         self.cube = realistic_3d()
         self.pcoords = ('grid_longitude',
                         'grid_latitude')  # plot axis coordinates.
+        self.fig = plt.figure()
+        projection = self.cube.coord_system().as_cartopy_projection()
+        self.axes = self.fig.add_subplot(111, projection=projection)
+
 
     def test(self):
-        cf = Pyplot(self.cube, self.pcoords)
+        cf = Pyplot(self.cube, self.pcoords, self.axes)
         actual = cf.coord_dims()
         expected = dict(forecast_period=0,
                         grid_latitude=1,
@@ -31,10 +36,13 @@ class Test_coord_dims(tests.IrisTest):
 class Test_slider_coords(tests.IrisTest):
     def setUp(self):
         self.cube = realistic_3d()
+        self.fig = plt.figure()
+        projection = self.cube.coord_system().as_cartopy_projection()
+        self.axes = self.fig.add_subplot(111, projection=projection)        
 
     def test_slider_all(self):
         # XXX: This shouldn't be allowed!
-        cf = Pyplot(self.cube, ())
+        cf = Pyplot(self.cube, (), self.axes)
         actual = cf.slider_coords()
         expected = set(self.cube.dim_coords)
         self.assertEqual(len(actual), len(expected))
@@ -43,7 +51,7 @@ class Test_slider_coords(tests.IrisTest):
 
     def test_slider_two(self):
         # XXX: This should't be allowed!
-        cf = Pyplot(self.cube, ('grid_longitude',))
+        cf = Pyplot(self.cube, ('grid_longitude',), self.axes)
         actual = cf.slider_coords()
         names = ('time', 'grid_latitude')
         expected = set([self.cube.coord(name) for name in names])
@@ -52,7 +60,7 @@ class Test_slider_coords(tests.IrisTest):
             self.assertIn(coord, expected)
 
     def test_slider_one(self):
-        cf = Pyplot(self.cube, ('grid_longitude', 'grid_latitude'))
+        cf = Pyplot(self.cube, ('grid_longitude', 'grid_latitude'), self.axes)
         actual = cf.slider_coords()
         expected = self.cube.coord('time')
         self.assertEqual(len(actual), 1)
@@ -61,7 +69,7 @@ class Test_slider_coords(tests.IrisTest):
     def test_slider_none(self):
         # XXX: This shouldn't be allowed!
         names = ('grid_latitude', 'grid_longitude', 'time')
-        cf = Pyplot(self.cube, names)
+        cf = Pyplot(self.cube, names, self.axes)
         actual = cf.slider_coords()
         self.assertEqual(len(actual), 0)
 
