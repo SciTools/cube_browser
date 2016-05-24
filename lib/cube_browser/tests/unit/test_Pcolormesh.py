@@ -7,7 +7,7 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 import iris.tests as tests
 
 from iris.tests.stock import realistic_3d
-
+import iris.plot
 from cartopy.mpl.geoaxes import GeoAxesSubplot
 from matplotlib.collections import QuadMesh
 import matplotlib.pyplot as plt
@@ -25,9 +25,9 @@ class Test__call__(tests.IrisTest):
 
     def test_plot_type(self):
         fig = plt.figure()
-        projection = self.cube.coord_system().as_cartopy_projection()
+        projection = iris.plot.default_projection(self.cube)
         ax = fig.add_subplot(111, projection=projection)
-        pcm = Pcolormesh(self.cube, self.pcoords, ax)
+        pcm = Pcolormesh(self.cube, ax, self.pcoords)
         return_ax = pcm(time=0)
         self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
         self.assertTrue(isinstance(pcm.qm, QuadMesh))

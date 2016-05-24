@@ -15,7 +15,7 @@ if ipynb is not None:
 
 class Pyplot(object):
     """"""
-    def __init__(self, cube, coords, axes, **kwargs):
+    def __init__(self, cube, axes, coords, **kwargs):
         """
         Args:
 

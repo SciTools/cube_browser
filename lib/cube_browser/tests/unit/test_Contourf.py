@@ -7,7 +7,7 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 import iris.tests as tests
 
 from iris.tests.stock import realistic_3d
-
+import iris.plot
 from cartopy.mpl.geoaxes import GeoAxesSubplot
 from matplotlib.contour import QuadContourSet
 import matplotlib.pyplot as plt
@@ -23,9 +23,9 @@ class Test__call__(tests.IrisTest):
 
     def test_plot_type(self):
         fig = plt.figure()
-        projection = self.cube.coord_system().as_cartopy_projection()
+        projection = iris.plot.default_projection(self.cube)
         ax = fig.add_subplot(111, projection=projection)
-        cf = Contourf(self.cube, self.pcoords, ax)
+        cf = Contourf(self.cube, ax, self.pcoords)
         return_ax = cf(time=0)
         self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
         self.assertTrue(isinstance(cf.qcs, QuadContourSet))
