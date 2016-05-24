@@ -104,7 +104,7 @@ def goplot(sender):
             ax.coastlines()
         else:
             ax = fig.add_subplot(111)
-        conf = plot_type.value(cube, ax, [x_name, y_name])
+        conf = plot_type.value(cube, ax, coords=[x_name, y_name])
         browser = cube_browser.Browser(conf)
         sender.plot_container.children = [browser.form]
 plot_button.on_click(goplot)
