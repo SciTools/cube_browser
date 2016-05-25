@@ -53,6 +53,8 @@ class Pyplot(object):
         self.kwargs = kwargs
         # A mapping of 1d-coord name to dimension
         self.coord_dim = self.coord_dims()
+        # The data element of the plot. 
+        self.element = None
 
     def _default_coords(self):
         """
@@ -210,9 +212,12 @@ class Contourf(Pyplot):
 
         """
         cube = self._get_slice(coord_values)
-        # Add QuadContourSet to self
-        self.qcs = iplt.contourf(cube, coords=self.coords,
-                                 axes=self.axes, **self.kwargs)
+        if self.element is not None:
+            for col in self.element.collections:
+                col.remove()
+        # Add QuadContourSet to self as self.element
+        self.element = iplt.contourf(cube, coords=self.coords,
+                                     axes=self.axes, **self.kwargs)
         return plt.gca()
 
 
@@ -249,9 +254,12 @@ class Contour(Pyplot):
 
         """
         cube = self._get_slice(coord_values)
-        # Add QuadContourSet to self
-        self.qcs = iplt.contour(cube, coords=self.coords,
-                                axes=self.axes, **self.kwargs)
+        if self.element is not None:
+            for col in self.element.collections:
+                col.remove()
+        # Add QuadContourSet to self as self.element
+        self.element = iplt.contour(cube, coords=self.coords,
+                                    axes=self.axes, **self.kwargs)
         return plt.gca()
 
 
@@ -286,9 +294,11 @@ class Pcolormesh(Pyplot):
 
         """
         cube = self._get_slice(coord_values)
-        # Add QuadMesh to self
-        self.qm = iplt.pcolormesh(cube, coords=self.coords,
-                                  axes=self.axes, **self.kwargs)
+        if self.element is not None:
+            self.element.remove()
+        # Add QuadMesh to self as self.element
+        self.element = iplt.pcolormesh(cube, coords=self.coords,
+                                       axes=self.axes, **self.kwargs)
         return plt.gca()
 
 

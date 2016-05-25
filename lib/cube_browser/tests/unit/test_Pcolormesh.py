@@ -30,7 +30,10 @@ class Test__call__(tests.IrisTest):
         pcm = Pcolormesh(self.cube, ax, coords=self.pcoords)
         return_ax = pcm(time=0)
         self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
-        self.assertTrue(isinstance(pcm.qm, QuadMesh))
+        self.assertTrue(isinstance(pcm.element, QuadMesh))
+        update_ax = pcm(time=1)
+        self.assertTrue(isinstance(update_ax, GeoAxesSubplot))
+        self.assertTrue(isinstance(pcm.element, QuadMesh))
 
 
 if __name__ == '__main__':
