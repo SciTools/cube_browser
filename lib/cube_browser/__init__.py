@@ -150,18 +150,40 @@ class Pyplot(object):
 
     @property
     def aliases(self):
+        """
+        Returns the known dimension aliases for the plot's cube.
+
+        """
         result = None
         if self._dim_by_alias:
             result = self._dim_by_alias.copy()
         return result
 
     def remove_alias(self, name):
+        """
+        Remove the named dimension alias associated with the plot's cube.
+
+        """
         if name not in self._dim_by_alias:
             emsg = 'Unknown dimension alias {!r}.'
             raise ValueError(emsg.format(name))
         self._dim_by_alias.pop(name)
 
     def alias(self, **kwargs):
+        """
+        Associate the named alias to the specified cube dimension of the plot.
+
+        Kwargs:
+
+            The alias name and associated cube dimension.
+            E.g. ::
+
+                plot.alias(time=0, latitude=2)
+
+            This associates the 'time' alias to cube dimension 0, and the
+            'latitude' alias to cube dimension 2.
+
+        """
         ndim = self.cube.ndim
         for name, dim in kwargs.items():
             if not isinstance(dim, int):
