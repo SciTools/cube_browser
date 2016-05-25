@@ -110,7 +110,8 @@ class Test__check_coords(tests.IrisTest):
             Pyplot(self.cube, self.axes, coords=coords)
 
     def test_coordinate_scalar(self):
-        emsg = "y-axis plot coordinate 'air_pressure' must be 1d, got 0d"
+        emsg = ("y-axis plot coordinate 'air_pressure' cannot be a "
+                "scalar coordinate")
         coords = ('grid_longitude', 'air_pressure')
         with self.assertRaisesRegexp(ValueError, emsg):
             Pyplot(self.cube, self.axes, coords=coords)
@@ -118,7 +119,7 @@ class Test__check_coords(tests.IrisTest):
     def test_coordinate_multi(self):
         coord = AuxCoord(np.ones(self.cube.shape[1:]), long_name='wibble')
         self.cube.add_aux_coord(coord, (1, 2))
-        emsg = "x-axis plot coordinate 'wibble' must be 1d, got 2d"
+        emsg = "x-axis plot coordinate 'wibble' must be a dimension coordinate"
         coords = ('wibble', 'grid_latitude')
         with self.assertRaisesRegexp(ValueError, emsg):
             Pyplot(self.cube, self.axes, coords=coords)
