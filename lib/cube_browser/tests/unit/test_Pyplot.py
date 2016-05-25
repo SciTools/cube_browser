@@ -8,10 +8,8 @@ import iris.tests as tests
 
 from weakref import WeakValueDictionary
 
-import iris.plot
 from iris.coords import AuxCoord
 from iris.tests.stock import realistic_3d
-import matplotlib.pyplot as plt
 import numpy as np
 
 from cube_browser import Pyplot

@@ -418,7 +418,8 @@ class Browser(object):
         self.plot = plot
         # Mapping of cube id to shared cache.
         self._cache_by_cube_id = {}
-        self._build_mappings()
+        # XXX: can't integrate this quite yet, as require multi-plot support ...
+#        self._build_mappings()
         self._sliders = {}
         for coord in plot.slider_coords():
                 slider = ipywidgets.IntSlider(min=0, max=coord.shape[0] - 1,
@@ -431,14 +432,14 @@ class Browser(object):
         self.on_change(None)
         IPython.display.display(self.form)
 
-    def _build_mappings(self):
-        for plot in self.plots:
-            cube_id = id(plot.cube)
-            cache = self._cache_by_cube_id.get(cube_id)
-            if cache is None:
-                self._cache_by_cube_id[cube_id] = plot.cache
-            else:
-                plot.cache = cache
+    # def _build_mappings(self):
+    #     for plot in self.plots:
+    #         cube_id = id(plot.cube)
+    #         cache = self._cache_by_cube_id.get(cube_id)
+    #         if cache is None:
+    #             self._cache_by_cube_id[cube_id] = plot.cache
+    #         else:
+    #             plot.cache = cache
 
     def on_change(self, change):
         """
