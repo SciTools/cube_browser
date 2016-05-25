@@ -4,7 +4,7 @@ import six
 
 import IPython
 import ipywidgets
-from iris.coords import Coord
+from iris.coords import Coord, DimCoord
 import iris.plot as iplt
 import matplotlib.pyplot as plt
 
@@ -112,8 +112,8 @@ class Pyplot(object):
                 if coord < 0:
                     coord = ndim + coord
                 if coord < 0 or coord >= ndim:
-                    emsg = 'Nominated {}-axis plot dimension for {}d cube ' \
-                        'out of range, got {}.'
+                    emsg = ('Nominated {}-axis plot dimension for {}d cube '
+                            'out of range, got {}.')
                     raise IndexError(emsg.format(axis, ndim, coords[i]))
                 result.append(coord)
                 dims.append(coord)
@@ -122,20 +122,24 @@ class Pyplot(object):
                 cube_coord = self.cube.coords(coord)
                 if len(cube_coord) == 0:
                     name = coord.name() if isinstance(coord, Coord) else coord
-                    emsg = 'Nominated {}-axis plot coordinate {!r} not ' \
-                        'found on cube.'
+                    emsg = ('Nominated {}-axis plot coordinate {!r} not '
+                            'found on cube.')
                     raise ValueError(emsg.format(axis, name))
                 [coord] = cube_coord
+                if not isinstance(coord, DimCoord):
+                    emsg = ('Nominated {}-axis plot coordinate {!r} must be '
+                            'a dimension coordinate.')
+                    raise ValueError(emsg.format(axis, coord.name()))
                 dim = self.cube.coord_dims(coord)
-                if len(dim) != 1:
-                    emsg = 'Nominated {}-axis plot coordinate {!r} must be ' \
-                        '1d, got {}d.'
-                    raise ValueError(emsg.format(axis, coord.name(), len(dim)))
+                if not dim:
+                    emsg = ('Nominated {}-axis plot coordinate {!r} cannot be '
+                            'a scalar coordinate.')
+                    raise ValueError(emsg.format(axis, coord.name()))
                 result.append(coord)
                 dims.append(dim[0])
         if dims[0] == dims[1]:
-            emsg = 'Nominated x-axis and y-axis reference the same cube ' \
-                'dimension, got {}.'
+            emsg = ('Nominated x-axis and y-axis reference the same cube '
+                    'dimension, got {}.')
             raise ValueError(emsg.format(dims[0]))
         if translate:
             # Ensure explicit dimension values are suitably translated
