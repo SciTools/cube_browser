@@ -6,6 +6,8 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 # before importing anything else.
 import iris.tests as tests
 
+from weakref import WeakValueDictionary
+
 import iris.plot
 from iris.coords import AuxCoord
 from iris.tests.stock import realistic_3d
@@ -334,6 +336,36 @@ class Test_aliases(tests.IrisTest):
             plot.alias(**{name: dim})
         self.assertEqual(plot.aliases, expected)
         self.assertIsNot(plot.aliases, plot._dim_by_alias)
+
+class Test_cache(tests.IrisTest):
+    def setUp(self):
+        cube = realistic_3d()
+        axes = tests.mock.sentinel.axes
+        self.plot = Pyplot(cube, axes)
+
+    def test_cache_create(self):
+        self.assertIsNone(self.plot._cache)
+        cache = self.plot.cache
+        self.assertIsInstance(cache, WeakValueDictionary)
+        self.assertEqual(cache, {})
+
+    def test_bad_cache_setter(self):
+        emsg = ("Require cache to be a 'WeakValueDictionary', "
+                "got 'dict'")
+        with self.assertRaisesRegexp(TypeError, emsg):
+            self.plot.cache = dict()
+
+    def test_cache_lookup(self):
+        index = 0
+        kwargs = dict(time=index)
+        subcube = self.plot._get_slice(kwargs)
+        expected = self.plot.cube[index]
+        self.assertEqual(subcube, expected)
+        self.assertEqual(self.plot.subcube, expected)
+        cache = self.plot.cache
+        key = tuple(sorted(kwargs.items()))
+        self.assertIn(key, cache)
+        self.assertEqual(cache[key], expected)
 
 
 class Test_coord_dims(tests.IrisTest):
