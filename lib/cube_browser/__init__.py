@@ -2,6 +2,8 @@ from __future__ import (absolute_import, division, print_function)
 from six.moves import (filter, input, map, range, zip)  # noqa
 import six
 
+from weakref import WeakValueDictionary
+
 import IPython
 import ipywidgets
 from iris.coords import Coord, DimCoord
@@ -41,6 +43,8 @@ class Pyplot(object):
 
         """
         self.cube = cube
+        #: The latest rendered cube slice.
+        self.subcube = None
         if cube.ndim < 2:
             emsg = '{} requires at least a 2d cube, got {}d.'
             raise ValueError(emsg.format(type(self).__name__, cube.ndim))
@@ -57,6 +61,8 @@ class Pyplot(object):
         self.element = None
         # A mapping of dimension alias name to dimension.
         self._dim_by_alias = {}
+        # A weak reference value cache for plot sub-cubes.
+        self._cache = None
 
     def _default_coords(self):
         """
@@ -217,14 +223,30 @@ class Pyplot(object):
                     raise ValueError(emsg.format(name, dim, dims[0]))
             self._dim_by_alias[name] = dim
 
+    @property
+    def cache(self):
+        if self._cache is None:
+            self._cache = WeakValueDictionary()
+        return self._cache
+
+    @cache.setter
+    def cache(self, value):
+        if not isinstance(value, WeakValueDictionary):
+            emsg = "Require cache to be a {!r}, got {!r}."
+            raise TypeError(emsg.format(WeakValueDictionary.__name__,
+                                        type(value).__name__))
+        self._cache = value
+
     def _get_slice(self, coord_values):
         index = [slice(None)] * self.cube.ndim
         for name, value in coord_values.items():
             if name in self.coord_dim:
                 index[self.coord_dim[name]] = value
-        cube = self.cube[tuple(index)]
-        plt.sca(self.axes)
-        return cube
+        index = tuple(index)
+        key = tuple(sorted(coord_values.items()))
+        # A primative weak reference cache.
+        self.subcube = self.cache.setdefault(key, self.cube[index])
+        return self.subcube
 
     def coord_dims(self):
         """
@@ -394,6 +416,10 @@ class Browser(object):
 
         """
         self.plot = plot
+        # Mapping of cube id to shared cache.
+        self._cache_by_cube_id = {}
+        # XXX: can't integrate this quite yet, as require multi-plot support ...
+#        self._build_mappings()
         self._sliders = {}
         for coord in plot.slider_coords():
                 slider = ipywidgets.IntSlider(min=0, max=coord.shape[0] - 1,
@@ -405,6 +431,15 @@ class Browser(object):
         # This bit displays the slider and the plot.
         self.on_change(None)
         IPython.display.display(self.form)
+
+    # def _build_mappings(self):
+    #     for plot in self.plots:
+    #         cube_id = id(plot.cube)
+    #         cache = self._cache_by_cube_id.get(cube_id)
+    #         if cache is None:
+    #             self._cache_by_cube_id[cube_id] = plot.cache
+    #         else:
+    #             plot.cache = cache
 
     def on_change(self, change):
         """
