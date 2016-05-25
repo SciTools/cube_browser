@@ -45,16 +45,18 @@ class Pyplot(object):
             emsg = '{} requires at least a 2d cube, got {}d.'
             raise ValueError(emsg.format(type(self).__name__, cube.ndim))
         self.axes = axes
-        # Coordinates/dimensions to use for the plot x-axis, y-axis.
         coords = kwargs.pop('coords', None)
         if coords is None:
             coords = self._default_coords()
+        #: Coordinates/dimensions to use for the plot x-axis and y-axis.
         self.coords = self._check_coords(coords)
         self.kwargs = kwargs
-        # A mapping of 1d-coord name to dimension
+        #: A mapping of 1d-coord name to dimension.
         self.coord_dim = self.coord_dims()
-        # The data element of the plot. 
+        #: The data element of the plot.
         self.element = None
+        # A mapping of dimension alias name to dimension.
+        self._dim_by_alias = {}
 
     def _default_coords(self):
         """
@@ -145,6 +147,49 @@ class Pyplot(object):
                 if isinstance(r, int):
                     result[i] = d
         return tuple(result)
+
+    @property
+    def aliases(self):
+        result = None
+        if self._dim_by_alias:
+            result = self._dim_by_alias.copy()
+        return result
+
+    def remove_alias(self, name):
+        if name not in self._dim_by_alias:
+            emsg = 'Unknown dimension alias {!r}.'
+            raise ValueError(emsg.format(name))
+        self._dim_by_alias.pop(name)
+
+    def alias(self, **kwargs):
+        ndim = self.cube.ndim
+        for name, dim in kwargs.items():
+            if not isinstance(dim, int):
+                emsg = ('Alias {!r} requires an integer dimension value, '
+                        'got {!r}.')
+                raise TypeError(emsg.format(name, type(dim).__name__))
+            original = dim
+            if dim < 0:
+                dim = ndim + dim
+            if dim < 0 or dim >= ndim:
+                emsg = ('Dimension alias {!r} value for {}d cube out of '
+                        'range, got {}.')
+                raise IndexError(emsg.format(name, ndim, original))
+            coords = self.cube.coords(name)
+            if coords:
+                dims = self.cube.coord_dims(name)
+                dcount = len(dims)
+                if dcount != 1:
+                    dtype = 'scalar' if dcount == 0 else '{}d'.format(dcount)
+                    emsg = ('Dimension alias {!r} cannot cover a {} '
+                            'coordinate.')
+                    raise ValueError(emsg.format(name, dtype))
+                if dim != dims[0]:
+                    emsg = ('Dimension alias {!r} must cover the same '
+                            'dimension as existing cube coordinate, got '
+                            'dimension {} expected {}.')
+                    raise ValueError(emsg.format(name, dim, dims[0]))
+            self._dim_by_alias[name] = dim
 
     def _get_slice(self, coord_values):
         index = [slice(None)] * self.cube.ndim

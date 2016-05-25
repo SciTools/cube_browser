@@ -217,6 +217,124 @@ class Test__check_coords(tests.IrisTest):
         self.assertEqual(plot.coords, expected)
 
 
+class Test_alias(tests.IrisTest):
+    def setUp(self):
+        self.cube = realistic_3d()
+        self.axes = tests.mock.sentinel.axes
+
+    def test_bad_dim_type(self):
+        emsg = "Alias 'wibble' requires an integer dimension value"
+        plot = Pyplot(self.cube, self.axes)
+        with self.assertRaisesRegexp(TypeError, emsg):
+            plot.alias(wibble='wobble')
+
+    def test_bad_dim_under(self):
+        emsg = "alias 'wibble' value for 3d cube out of range"
+        plot = Pyplot(self.cube, self.axes)
+        with self.assertRaisesRegexp(IndexError, emsg):
+            plot.alias(wibble=-4)
+
+    def test_bad_dim_over(self):
+        emsg = "alias 'wibble' value for 3d cube out of range"
+        plot = Pyplot(self.cube, self.axes)
+        with self.assertRaisesRegexp(IndexError, emsg):
+            plot.alias(wibble=3)
+
+    def test_bad_cover_scalar(self):
+        emsg = "alias 'air_pressure' cannot cover a scalar coordinate"
+        plot = Pyplot(self.cube, self.axes)
+        with self.assertRaisesRegexp(ValueError, emsg):
+            plot.alias(air_pressure=1)
+
+    def test_bad_cover_multi(self):
+        emsg = "alias 'wibble' cannot cover a 2d coordinate"
+        coord = AuxCoord(np.ones(self.cube.shape[1:]), long_name='wibble')
+        self.cube.add_aux_coord(coord, (1, 2))
+        plot = Pyplot(self.cube, self.axes)
+        with self.assertRaisesRegexp(ValueError, emsg):
+            plot.alias(wibble=1)
+
+    def test_bad_dim_cover(self):
+        emsg = ("alias 'time' must cover the same dimension as existing "
+                'cube coordinate')
+        plot = Pyplot(self.cube, self.axes)
+        with self.assertRaisesRegexp(ValueError, emsg):
+            plot.alias(time=2)
+
+    def test_cover_dim_existing(self):
+        plot = Pyplot(self.cube, self.axes)
+        plot.alias(time=0)
+        self.assertEqual(len(plot._dim_by_alias), 1)
+        self.assertIn('time', plot._dim_by_alias)
+        self.assertEqual(plot._dim_by_alias['time'], 0)
+
+    def test_cover_dim_existing_negative(self):
+        plot = Pyplot(self.cube, self.axes)
+        plot.alias(time=-3)
+        self.assertEqual(len(plot._dim_by_alias), 1)
+        self.assertIn('time', plot._dim_by_alias)
+        self.assertEqual(plot._dim_by_alias['time'], 0)
+
+    def test_cover_anonymous(self):
+        self.cube.remove_coord('grid_longitude')
+        plot = Pyplot(self.cube, self.axes)
+        plot.alias(longitude=2)
+        self.assertEqual(len(plot._dim_by_alias), 1)
+        self.assertIn('longitude', plot._dim_by_alias)
+        self.assertEqual(plot._dim_by_alias['longitude'], 2)
+
+    def test_cover_anonymous_negative(self):
+        self.cube.remove_coord('grid_latitude')
+        plot = Pyplot(self.cube, self.axes)
+        plot.alias(latitude=-2)
+        self.assertEqual(len(plot._dim_by_alias), 1)
+        self.assertIn('latitude', plot._dim_by_alias)
+        self.assertEqual(plot._dim_by_alias['latitude'], 1)
+
+
+class Test_remove_alias(tests.IrisTest):
+    def setUp(self):
+        self.cube = realistic_3d()
+        self.axes = tests.mock.sentinel.axes
+
+    def test_alias_unknown(self):
+        emsg = "Unknown dimension alias 'wibble'"
+        plot = Pyplot(self.cube, self.axes)
+        with self.assertRaisesRegexp(ValueError, emsg):
+            plot.remove_alias('wibble')
+
+    def test_alias_known(self):
+        plot = Pyplot(self.cube, self.axes)
+        self.assertEqual(len(plot._dim_by_alias), 0)
+        plot.alias(wibble=0)
+        self.assertEqual(len(plot._dim_by_alias), 1)
+        self.assertIn('wibble', plot._dim_by_alias)
+        self.assertEqual(plot._dim_by_alias['wibble'], 0)
+        plot.remove_alias('wibble')
+        self.assertNotIn('wibble', plot._dim_by_alias)
+        self.assertEqual(len(plot._dim_by_alias), 0)
+
+
+class Test_aliases(tests.IrisTest):
+    def setUp(self):
+        self.cube = realistic_3d()
+        self.axes = tests.mock.sentinel.axes
+
+    def test_no_aliases(self):
+        plot = Pyplot(self.cube, self.axes)
+        self.assertIsNone(plot.aliases)
+
+    def test_aliases(self):
+        plot = Pyplot(self.cube, self.axes)
+        expected = {}
+        aliases = [('wibble', 0), ('wobble', 1), ('bibble', 2)]
+        for (name, dim) in aliases:
+            expected[name] = dim
+            plot.alias(**{name: dim})
+        self.assertEqual(plot.aliases, expected)
+        self.assertIsNot(plot.aliases, plot._dim_by_alias)
+
+
 class Test_coord_dims(tests.IrisTest):
     def setUp(self):
         self.cube = realistic_3d()
