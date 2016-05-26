@@ -86,8 +86,8 @@ y_coord = ipywidgets.Dropdown(
 
 # Plot action.
 plot_button = ipywidgets.Button(description="Plot my cube")
-# Create a Box and make the plot button contain this object.
-plot_button.plot_container = ipywidgets.Box()
+# Create a Box to manage the plot.
+plot_container = ipywidgets.Box()
 # Create the cube_browser.Pyplot and cube_browser.Browser
 # and mkae them the children of the plot_button's container.
 def goplot(sender):
@@ -106,7 +106,7 @@ def goplot(sender):
             ax = fig.add_subplot(111)
         conf = plot_type.value(cube, ax, coords=[x_name, y_name])
         browser = cube_browser.Browser(conf)
-        plot_button.plot_container.children = [browser.form]
+        plot_container.children = [browser.form]
 plot_button.on_click(goplot)
 
 # Define a container for the main controls in the browse interface.
@@ -117,4 +117,4 @@ container = ipywidgets.Box(children=[path, files, load_button, cubes_print,
 # Display the browse interface.
 IPython.display.display(container)
 
-IPython.display.display(plot_button.plot_container)
+IPython.display.display(plot_container)
