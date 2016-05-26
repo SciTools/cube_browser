@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 # Cube-browser version.
 __version__ = '0.1.0-dev'
 
-# Set default IPython magics if a notebook is called the import
+# Set default IPython magics if an IPython session has invoked the import.
 ipynb = IPython.get_ipython()
 if ipynb is not None:
     ipynb.magic(u"%matplotlib notebook")
@@ -387,18 +387,16 @@ class Pcolormesh(Pyplot):
 
         """
         cube = self._get_slice(coord_values)
+        # guess bounds, if required.
+        for cname in self.coords:
+            coord = cube.coord(cname)
+            if len(coord.points) > 1 and not coord.has_bounds():
+                coord.guess_bounds()
         if self.element is not None:
             self.element.remove()
         # Add QuadMesh to self as self.element
         self.element = iplt.pcolormesh(cube, coords=self.coords,
                                        axes=self.axes, **self.kwargs)
-        for cname in self.coords:
-            coord = cube.coord(cname)
-            if len(coord.points) > 1 and not coord.has_bounds():
-                coord.guess_bounds()
-        # Add QuadMesh to self
-        self.qm = iplt.pcolormesh(cube, coords=self.coords,
-                                  axes=self.axes, **self.kwargs)
         return plt.gca()
 
 
