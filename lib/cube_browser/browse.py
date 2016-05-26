@@ -106,7 +106,7 @@ def goplot(sender):
             ax = fig.add_subplot(111)
         conf = plot_type.value(cube, ax, coords=[x_name, y_name])
         browser = cube_browser.Browser(conf)
-        sender.plot_container.children = [browser.form]
+        plot_button.plot_container.children = [browser.form]
 plot_button.on_click(goplot)
 
 # Define a container for the main controls in the browse interface.
