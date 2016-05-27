@@ -2,6 +2,8 @@ from __future__ import (absolute_import, division, print_function)
 from six.moves import (filter, input, map, range, zip)  # noqa
 import six
 
+from collections import Iterable, namedtuple
+import warnings
 from weakref import WeakValueDictionary
 
 import IPython
@@ -14,11 +16,48 @@ import matplotlib.pyplot as plt
 # Cube-browser version.
 __version__ = '0.1.0-dev'
 
+
 # Set default IPython magics if an IPython session has invoked the import.
 ipynb = IPython.get_ipython()
 if ipynb is not None:
     ipynb.magic(u"%matplotlib notebook")
     ipynb.magic(u"%autosave 0")
+
+
+class _AxisAlias(namedtuple('_AxisAlias', 'dim, name, size')):
+    def __eq__(self, other):
+        result = NotImplemented
+        if isinstance(other, _AxisAlias):
+            left = (self.name, self.size)
+            right = (other.name, other.size)
+            result = left == right
+        elif isinstance(other, _AxisDefn):
+            result = False
+        return result
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        if result is not NotImplemented:
+            result = not result
+        return result
+
+
+class _AxisDefn(namedtuple('_AxisDefn', 'dim, name, size, coord')):
+    def __eq__(self, other):
+        result = NotImplemented
+        if isinstance(other, _AxisDefn):
+            left = (self.name, self.size, self.coord)
+            right = (other.name, other.size, other.coord)
+            result = left == right
+        elif isinstance(other, _AxisAlias):
+            result = False
+        return result
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        if result is not NotImplemented:
+            result = not result
+        return result
 
 
 class Pyplot(object):
@@ -45,6 +84,8 @@ class Pyplot(object):
         self.cube = cube
         #: The latest rendered cube slice.
         self.subcube = None
+        #: The associated rendered matplotlib element.
+        self.element = None
         if cube.ndim < 2:
             emsg = '{} requires at least a 2d cube, got {}d.'
             raise ValueError(emsg.format(type(self).__name__, cube.ndim))
@@ -55,13 +96,14 @@ class Pyplot(object):
         #: Coordinates/dimensions to use for the plot x-axis and y-axis.
         self.coords = self._check_coords(coords)
         self.kwargs = kwargs
-        #: A mapping of 1d-coord name to dimension.
-        self.coord_dim = self.coord_dims()
-        #: The data element of the plot.
-        self.element = None
+        # Set of plot axis dimensions.
+        self._plot_dims = {c if isinstance(c, int) else
+                           cube.coord_dims(c)[0] for c in self.coords}
+        # Mapping of slider dimension coordinate name to dimension.
+        self._slider_dim_by_name = self._sliders_dim()
         # A mapping of dimension alias name to dimension.
         self._dim_by_alias = {}
-        # A weak reference value cache for plot sub-cubes.
+        # A weak reference value cache for plot sub-cube sharing.
         self._cache = None
 
     def _default_coords(self):
@@ -88,9 +130,9 @@ class Pyplot(object):
             # Default to the last two cube dimensions in ydim, xdim order.
             ndim = self.cube.ndim
             xdim, ydim = ndim - 1, ndim - 2
-            xcoord = self.cube.coords(dimensions=(xdim,), dim_coords=True)
+            xcoord = self.cube.coords(dimensions=xdim, dim_coords=True)
             xcoord = xcoord[0] if xcoord else xdim
-            ycoord = self.cube.coords(dimensions=(ydim,), dim_coords=True)
+            ycoord = self.cube.coords(dimensions=ydim, dim_coords=True)
             ycoord = ycoord[0] if ycoord else ydim
             coords = (xcoord, ycoord)
         return coords
@@ -221,6 +263,12 @@ class Pyplot(object):
                             'dimension as existing cube coordinate, got '
                             'dimension {} expected {}.')
                     raise ValueError(emsg.format(name, dim, dims[0]))
+            # Check there are no alias covering the same dimension.
+            if dim in self._dim_by_alias.values():
+                emsg = ('Dimension alias {!r} covers the same dimension '
+                        'as alias {!r}.')
+                alias_by_dim = self._invert_mapping(self._dim_by_alias)
+                raise ValueError(emsg.format(name, alias_by_dim[dim]))
             self._dim_by_alias[name] = dim
 
     @property
@@ -237,43 +285,127 @@ class Pyplot(object):
                                         type(value).__name__))
         self._cache = value
 
-    def _get_slice(self, coord_values):
-        index = [slice(None)] * self.cube.ndim
-        for name, value in coord_values.items():
-            if name in self.coord_dim:
-                index[self.coord_dim[name]] = value
-        index = tuple(index)
-        key = tuple(sorted(coord_values.items()))
-        # A primative weak reference cache.
-        self.subcube = self.cache.setdefault(key, self.cube[index])
-        return self.subcube
-
-    def coord_dims(self):
+    def _sliders_dim(self):
         """
-        Compiles a mapping dictionary of dimension coordinates.
+        Determines the dimension coordinate and associated dimension for each
+        cube slider dimension i.e. not plot dimensions.
+
+        Returns a dictionary of slider dimension by coordinate name.
 
         """
         mapping = {}
-        for dim in range(self.cube.ndim):
-            coords = self.cube.coords(dimensions=(dim,))
-            mapping.update([(c.name(), dim) for c in coords])
+        dims = set(range(self.cube.ndim)) - self._plot_dims
+        for dim in dims:
+            coord = self.cube.coords(dimensions=dim, dim_coords=True)
+            if coord:
+                mapping[coord[0].name()] = dim
+            else:
+                # Fill with an appropriate dimension coordinate from the
+                # auxiliary coordinates.
+                coords = self.cube.coords(dimensions=dim, dim_coords=False)
+                coords = [coord for coord in coords
+                          if isinstance(coord, DimCoord)]
+                if coords:
+                    func = lambda coord: coord._as_defn()
+                    coords.sort(key=func)
+                    mapping[coords[0].name()] = dim
         return mapping
 
-    def slider_coords(self):
+    @staticmethod
+    def _invert_mapping(mapping):
         """
-        Compiles a list of the dim coords not used on the plot axes, to be
-        used as slider coordinates.
+        Reverse the dictionary mapping from (key, value) to (value, key).
+
+        Returns the inverted dictionary.
 
         """
-        available = []
-        for coord in self.cube.dim_coords:
-            if coord not in self.coords:
-                available.append(coord)
-        return available
+        keys = set(mapping.keys())
+        values = set(mapping.values())
+        if len(keys) != len(values):
+            emsg = 'Cannot invert non 1-to-1 mapping, got {!r}.'
+            raise ValueError(emsg.format(mapping))
+        result = dict(map(lambda (k, v): (v, k), mapping.items()))
+        return result
+
+    @property
+    def sliders_axis(self):
+        """
+        Returns a list containing either an :class:`~cube_browser._AxisAlias`
+        or :class:`~cube_browser._AxisDefn` for each cube slider dimension.
+
+        """
+        shape = self.cube.shape
+        dims = set(range(self.cube.ndim)) - self._plot_dims
+        slider_name_by_dim = self._invert_mapping(self._slider_dim_by_name)
+        alias_by_dim = self._invert_mapping(self._dim_by_alias)
+        result = []
+        for dim in dims:
+            name = alias_by_dim.get(dim)
+            if name is not None:
+                axis = _AxisAlias(dim=dim, name=name, size=shape[dim])
+            else:
+                name = slider_name_by_dim.get(dim)
+                if name is None:
+                    emsg = '{!r} cube {!r} has no meta-data for dimension {}.'
+                    raise ValueError(emsg.format(type(self).__name__,
+                                                 self.cube.name(), dim))
+                # Prepare the coordinate for lenient equality.
+                coord = self.cube.coord(name).copy()
+                coord.bounds = None
+                coord.var_name = None
+                coord.attributes = {}
+                axis = _AxisDefn(dim=dim, name=name,
+                                 size=coord.points.size, coord=coord)
+            result.append(axis)
+        return result
+
+    # XXX: Issue #24
+    def __call__(self, **kwargs):
+        """
+        Renders the plot for the given named slider values.
+
+        Kwargs:
+
+            The slider name and associated dimension index value.
+            E.g. ::
+
+                plot(time=5, model_level_number=23)
+
+            The plot cube will be sliced on the associated 'time' and
+            'model_level_number' dimensions at the specified index values
+            before being rendered on its axes.
+
+        """
+        index = [slice(None)] * self.cube.ndim
+        alias_by_dim = self._invert_mapping(self._dim_by_alias)
+        for name, value in kwargs.items():
+            # The alias has priority, so check this first.
+            dim = self._dim_by_alias.get(name)
+            if dim is None:
+                dim = self._slider_dim_by_name.get(name)
+                if dim is None:
+                    emsg = '{!r} called with unknown name {!r}.'
+                    raise ValueError(emsg.format(type(self).__name__, name))
+                else:
+                    if dim in alias_by_dim:
+                        wmsg = ('{!r} expected to be called with alias {!r} '
+                                'for dimension {}, rather than with {!r}.')
+                        warnings.warn(wmsg.format(type(self).__name__,
+                                                  alias_by_dim[dim], dim,
+                                                  name))
+            index[dim] = value
+        index = tuple(index)
+        key = tuple(sorted(kwargs.items()))
+        # A primative weak reference cache.
+        self.subcube = self.cache.setdefault(key, self.cube[index])
+        return self.draw(self.subcube)
+
+    def draw(self, cube):
+        """Abstract method."""
+        emsg = '{!r} requires a draw method for rendering.'
+        raise NotImplementedError(emsg.format(type(self).__name__))
 
 
-# XXX: #26: Chunks of this to be moved to somewhere else as they are shared
-# with other plots
 class Contourf(Pyplot):
     """
     Constructs a filled contour plot instance of a cube.
@@ -285,37 +417,19 @@ class Contourf(Pyplot):
     for details of other valid keyword arguments
 
     """
+    def draw(self, cube):
+        self.element = iplt.contourf(cube, axes=self.axes, coords=self.coords,
+                                     **self.kwargs)
+        return self.element
 
-    # XXX: #24: coord_values is under review to be changed to a list or
-    # dictionary or something
-    # NOTE: Currently, Browser supplies a dictionary here.
-    def __call__(self, **coord_values):
-        """
-        Constructs a static plot of the cube sliced at the coordinates
-        specified in coord_values.
-
-        This is called once each time a slider position is moved, at which
-        point the new coordinate values are plotted.
-
-        Args:
-
-        * coord_values
-            Mapping dictionary of coordinate name or dimension
-            index with value index at which to be sliced.
-
-        """
-        cube = self._get_slice(coord_values)
+    # XXX: Not sure this should live here!
+    #      Need test coverage!
+    def clear(self):
         if self.element is not None:
-            for col in self.element.collections:
-                col.remove()
-        # Add QuadContourSet to self as self.element
-        self.element = iplt.contourf(cube, coords=self.coords,
-                                     axes=self.axes, **self.kwargs)
-        return plt.gca()
+            for collection in self.element.collections:
+                collection.remove()
 
 
-# XXX: #26: Chunks of this to be moved to somewhere else as they are shared
-# with other plots
 class Contour(Pyplot):
     """
     Constructs a line contour plot instance of a cube.
@@ -327,33 +441,15 @@ class Contour(Pyplot):
     for details of other valid keyword arguments.
 
     """
+    def draw(self, cube):
+        self.element = iplt.contour(cube, axes=self.axes, coords=self.coords,
+                                    **self.kwargs)
+        return self.element
 
-    # XXX: #24: coord_values is under review to be changed to a list or
-    # dictionary or something
-    # NOTE: Currently, Browser supplies a dictionary here.
-    def __call__(self, **coord_values):
-        """
-        Constructs a static plot of the cube sliced at the coordinates
-        specified in coord_values.
-
-        This is called once each time a slider position is moved, at which
-        point the new coordinate values are plotted.
-
-        Args:
-
-        * coord_values
-            Mapping dictionary of coordinate name or dimension
-            index with value index at which to be sliced.
-
-        """
-        cube = self._get_slice(coord_values)
+    def clear(self):
         if self.element is not None:
-            for col in self.element.collections:
-                col.remove()
-        # Add QuadContourSet to self as self.element
-        self.element = iplt.contour(cube, coords=self.coords,
-                                    axes=self.axes, **self.kwargs)
-        return plt.gca()
+            for collection in self.element.collections:
+                collection.remove()
 
 
 class Pcolormesh(Pyplot):
@@ -367,37 +463,20 @@ class Pcolormesh(Pyplot):
     for details of other valid keyword arguments.
 
     """
+    def draw(self, cube):
+        for name in self.coords:
+            if not isinstance(name, int):
+                coord = cube.coord(name)
+                if not coord.has_bounds():
+                    coord.guess_bounds()
 
-    # XXX: #24: coord_values is under review to be changed to a list or
-    # dictionary or something
-    # NOTE: Currently, Browser supplies a dictionary here.
-    def __call__(self, **coord_values):
-        """
-        Constructs a static plot of the cube sliced at the coordinates
-        specified in coord_values.
+        self.element = iplt.pcolormesh(cube, axes=self.axes,
+                                       coords=self.coords, **self.kwargs)
+        return self.element
 
-        This is called once each time a slider position is moved, at which
-        point the new coordinate values are plotted.
-
-        Args:
-
-        * coord_values
-            Mapping dictionary of coordinate name or dimension
-            index with value index at which to be sliced.
-
-        """
-        cube = self._get_slice(coord_values)
-        # guess bounds, if required.
-        for cname in self.coords:
-            coord = cube.coord(cname)
-            if len(coord.points) > 1 and not coord.has_bounds():
-                coord.guess_bounds()
+    def clear(self):
         if self.element is not None:
             self.element.remove()
-        # Add QuadMesh to self as self.element
-        self.element = iplt.pcolormesh(cube, coords=self.coords,
-                                       axes=self.axes, **self.kwargs)
-        return plt.gca()
 
 
 class Browser(object):
@@ -409,7 +488,7 @@ class Browser(object):
     displayed in a Jupyter notebook.
 
     """
-    def __init__(self, plot):
+    def __init__(self, plots):
         """
         Compiles non-axis coordinates into sliders, the values from which are
         used to reconstruct plots upon movement of slider.
@@ -420,43 +499,120 @@ class Browser(object):
             cube_browser plot instance to display with slider.
 
         """
-        self.plot = plot
-        # Mapping of cube id to shared cache.
+        if not isinstance(plots, Iterable):
+            plots = [plots]
+        self.plots = plots
+
+        # Mapping of coordinate/alias name to axis.
+        self._axis_by_name = {}
+        # Mapping of cube-id to shared cache.
         self._cache_by_cube_id = {}
-        # XXX: can't integrate this quite yet, as require multi-plot support ...
-#        self._build_mappings()
-        self._sliders = {}
-        for coord in plot.slider_coords():
-                slider = ipywidgets.IntSlider(min=0, max=coord.shape[0] - 1,
-                                              description=coord.name())
+        # Mapping of plot-id to coordinate/alias name.
+        self._names_by_plot_id = {}
+        # Mapping of coordinate/alias name to plots.
+        self._plots_by_name = {}
+        self._build_mappings()
+
+        self._slider_by_name = {}
+        self._name_by_slider_id = {}
+        for axis in self._axis_by_name.values():
+                slider = ipywidgets.IntSlider(min=0, max=axis.size - 1,
+                                              description=axis.name)
                 slider.observe(self.on_change, names='value')
-                self._sliders[coord.name()] = slider
-        self.form = ipywidgets.VBox()
-        self.form.children = self._sliders.values()
-        # This bit displays the slider and the plot.
-        self.on_change(None)
+                self._slider_by_name[axis.name] = slider
+                self._name_by_slider_id[id(slider)] = axis.name
+
+        self._form = ipywidgets.VBox()
+        # Layout the sliders in a consitent order.
+        slider_names = sorted(self._slider_by_name)
+        sliders = [self._slider_by_name[name] for name in slider_names]
+        self._form.children = sliders
 
     def display(self):
-        IPython.display.display(self.form)
+        # XXX: Ideally, we might want to register an IPython display hook.
+        self.on_change(None)
+        IPython.display.display(self._form)
 
-    # def _build_mappings(self):
-    #     for plot in self.plots:
-    #         cube_id = id(plot.cube)
-    #         cache = self._cache_by_cube_id.get(cube_id)
-    #         if cache is None:
-    #             self._cache_by_cube_id[cube_id] = plot.cache
-    #         else:
-    #             plot.cache = cache
+    def _build_mappings(self):
+        """
+        Create the cross-reference dictionaries required to manage the
+        orchestration of the registered plots.
+
+        In summary,
+            * _axis_by_name
+                The mapping with the meta-data required to define each
+                slider dimension.
+            * _cache_by_cube_id
+                The mapping used to share the weak reference cache between
+                plots that reference the same cube.
+            * _names_by_plot_id
+                The mapping that specifies the exact slider dimensions
+                required by each plot.
+            * _plots_by_name
+                The mapping that specifies all the plots to be updated when
+                a specific slider state changes.
+
+        """
+        for plot in self.plots:
+            names = []
+            for axis in plot.sliders_axis:
+                if isinstance(axis, _AxisAlias):
+                    if axis.name is None:
+                        emsg = ('{!r} cube {!r} has no meta-data for '
+                                'dimension {}.')
+                        raise ValueError(emsg.format(type(plot).__name__,
+                                                     plot.cube.name(),
+                                                     axis.dim))
+                existing = self._axis_by_name.get(axis.name)
+                if existing is None:
+                    self._axis_by_name[axis.name] = axis
+                elif existing != axis:
+                    emsg = ('{!r} cube {!r} has an incompatible axis {!r} '
+                            'on dimension {}.')
+                    raise ValueError(emsg.format(type(plot).__name__,
+                                                 plot.cube.name(),
+                                                 axis.name, axis.dim))
+                plots = self._plots_by_name.setdefault(axis.name, [])
+                plots.append(plot)
+                names.append(axis.name)
+            if names:
+                # Only make an entry if the plot has at least one axis
+                # to slider over.
+                self._names_by_plot_id[id(plot)] = names
+            cube_id = id(plot.cube)
+            cache = self._cache_by_cube_id.get(cube_id)
+            if cache is None:
+                self._cache_by_cube_id[cube_id] = plot.cache
+            else:
+                plot.cache = cache
 
     def on_change(self, change):
         """
-        Compiles mapping dictionary of slider values.
-
-        This dictionary is re-compiled upon each movement of a coordinate
-        slider, to be passed to plot call in order to reconstruct the plot.
+        Common slider widget traitlet event handler that refreshes
+        all appropriate plots given a slider state change.
 
         """
-        slidermap = {}
-        for name, slider in self._sliders.items():
-            slidermap[name] = slider.value
-        self.plot(**slidermap)
+        def _update(plots, force=False):
+            for plot in plots:
+                plot.clear()
+            for plot in plots:
+                names = self._names_by_plot_id.get(id(plot))
+                # Check whether we need to force an invariant plot
+                # to render itself.
+                if force and names is None:
+                    names = []
+                if names is not None:
+                    kwargs = {name: slider_by_name[name].value
+                              for name in names}
+                    plot(**kwargs)
+
+        slider_by_name = self._slider_by_name
+        if change is None:
+            # Initial render of all the plots.
+            _update(self.plots, force=True)
+        else:
+            # A widget slider state has changed, so only refresh
+            # the appropriate plots.
+            slider_id = id(change['owner'])
+            name = self._name_by_slider_id[slider_id]
+            _update(self._plots_by_name[name])

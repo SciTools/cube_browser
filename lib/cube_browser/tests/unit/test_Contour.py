@@ -6,32 +6,31 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 # before importing anything else.
 import iris.tests as tests
 
-from iris.tests.stock import realistic_3d
-import iris.plot
 from cartopy.mpl.geoaxes import GeoAxesSubplot
+import iris.plot as iplt
+from iris.tests.stock import realistic_3d
 from matplotlib.contour import QuadContourSet
 import matplotlib.pyplot as plt
 
 from cube_browser import Contour
 
 
-class Test__call__(tests.IrisTest):
+class Test___call__(tests.IrisTest):
     def setUp(self):
         self.cube = realistic_3d()
-        self.pcoords = ('grid_longitude',
-                        'grid_latitude')  # plot axis coordinates.
+        self.coords = ('grid_longitude', 'grid_latitude')
 
-    def test_plot_type(self):
-        fig = plt.figure()
-        projection = self.cube.coord_system().as_cartopy_projection()
-        ax = fig.add_subplot(111, projection=projection)
-        cf = Contour(self.cube, ax, coords=self.pcoords)
-        return_ax = cf(time=0)
-        self.assertTrue(isinstance(return_ax, GeoAxesSubplot))
-        self.assertTrue(isinstance(cf.element, QuadContourSet))
-        update_ax = cf(time=1)
-        self.assertTrue(isinstance(update_ax, GeoAxesSubplot))
-        self.assertTrue(isinstance(cf.element, QuadContourSet))
+    def test(self):
+        projection = iplt.default_projection(self.cube)
+        ax = plt.subplot(111, projection=projection)
+        plot = Contour(self.cube, ax, coords=self.coords)
+        for index in range(self.cube.shape[0]):
+            element = plot(time=index)
+            self.assertIsInstance(element, QuadContourSet)
+            self.assertEqual(element, plot.element)
+            self.assertIsInstance(plot.axes, GeoAxesSubplot)
+            self.assertEqual(ax, plot.axes)
+            self.assertEqual(self.cube[index], plot.subcube)
 
 
 if __name__ == '__main__':
