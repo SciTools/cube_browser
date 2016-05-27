@@ -532,10 +532,10 @@ class Browser(object):
         slider_names = sorted(self._slider_by_name)
         sliders = [self._slider_by_name[name] for name in slider_names]
         self._form.children = sliders
-        # XXX: Ideally, we want to register an IPython display hook.
-        self.on_change(None)
 
     def display(self):
+        # XXX: Ideally, we might want to register an IPython display hook.
+        self.on_change(None)
         IPython.display.display(self._form)
 
     def _build_mappings(self):

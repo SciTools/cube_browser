@@ -283,12 +283,12 @@ class Test_on_change(tests.IrisTest):
         mockers = [mock.Mock(value=self.value) for i in range(20)]
         self.patch('ipywidgets.IntSlider', side_effect=mockers)
         self.patch('ipywidgets.VBox')
-        self.contour_func = 'cube_browser.Contour.__call__'
 
     def test(self):
         plot = Contour(self.cube, self.axes)
         with mock.patch('cube_browser.Browser.on_change') as on_change:
             browser = Browser(plot)
+            browser.display()
             on_change.assert_called_once_with(None)
 
     def test_single_plot_with_no_axis(self):
@@ -296,14 +296,16 @@ class Test_on_change(tests.IrisTest):
         plot = Contour(cube, self.axes)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser(plot)
-            # Check the __init__ refresh - forced!.
+            browser.display()
+            # Check the initial render - forced!.
             func.assert_called_once_with()
 
     def test_single_plot_with_axis(self):
         plot = Contour(self.cube, self.axes)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser(plot)
-            # Check the __init__ refresh.
+            browser.display()
+            # Check the initial render.
             func.assert_called_once_with(time=self.value)
             # Now simulate a slider change.
             slider = browser._slider_by_name['time']
@@ -319,7 +321,8 @@ class Test_on_change(tests.IrisTest):
         plot.alias(wibble=0)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser(plot)
-            # Check the __init__ refresh.
+            browser.display()
+            # Check the initial render.
             func.assert_called_once_with(wibble=self.value)
             # Now simulate a slider change.
             slider = browser._slider_by_name['wibble']
@@ -336,7 +339,8 @@ class Test_on_change(tests.IrisTest):
         c2 = Contour(cube, self.axes)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser([c1, c2])
-            # Check the __init__ refresh - forced!
+            browser.display()
+            # Check the initial render - forced!
             self.assertEqual(func.call_count, 2)
             expected = [mock.call(), mock.call()]
             func.assert_has_calls(expected)
@@ -347,7 +351,8 @@ class Test_on_change(tests.IrisTest):
         c2 = Contour(self.cube, self.axes, coords=coords)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser([c1, c2])
-            # Check the __init__ refresh.
+            browser.display()
+            # Check the initial render.
             expected = [mock.call(grid_longitude=self.value)]
             self.assertEqual(func.call_args_list, expected * 2)
             # Now simulate a slider change.
@@ -363,7 +368,8 @@ class Test_on_change(tests.IrisTest):
         c2 = Contour(other, self.axes)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser([c1, c2])
-            # Check the __init__ refresh.
+            browser.display()
+            # Check the initial render.
             self.assertEqual(func.call_count, 2)
             expected = [mock.call(time=self.value),
                         mock.call(time=self.value,
@@ -392,7 +398,8 @@ class Test_on_change(tests.IrisTest):
         c2 = Contour(other, self.axes)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser([c1, c2])
-            # Check the __init__ refresh.
+            browser.display()
+            # Check the initial render.
             self.assertEqual(func.call_count, 2)
             expected = [mock.call(time=self.value),
                         mock.call(model_level_number=self.value)]
@@ -420,7 +427,8 @@ class Test_on_change(tests.IrisTest):
         c2.alias(wibble=1)
         with mock.patch('cube_browser.Contour.__call__') as func:
             browser = Browser([c1, c2])
-            # Check the __init__ refresh.
+            browser.display()
+            # Check the initial render.
             self.assertEqual(func.call_count, 2)
             expected = [mock.call(wibble=self.value)] * 2
             func.assert_has_calls(expected)
