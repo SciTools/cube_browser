@@ -7,12 +7,13 @@ from six.moves import (filter, input, map, range, zip)  # noqa
 import iris.tests as tests
 
 from weakref import WeakValueDictionary
+import warnings
 
 from iris.coords import AuxCoord
 from iris.tests.stock import realistic_3d
 import numpy as np
 
-from cube_browser import Pyplot
+from cube_browser import Pyplot, AxisAlias, AxisDefn
 
 
 class Test__default_coords(tests.IrisTest):
@@ -292,6 +293,13 @@ class Test_alias(tests.IrisTest):
         self.assertIn('latitude', plot._dim_by_alias)
         self.assertEqual(plot._dim_by_alias['latitude'], 1)
 
+    def test_duplicate_alias_cover(self):
+        plot = Pyplot(self.cube, self.axes)
+        plot.alias(wibble=0)
+        emsg = "alias 'wobble' covers the same dimension as alias 'wibble'"
+        with self.assertRaisesRegexp(ValueError, emsg):
+            plot.alias(wobble=0)
+
 
 class Test_remove_alias(tests.IrisTest):
     def setUp(self):
@@ -335,10 +343,14 @@ class Test_aliases(tests.IrisTest):
         self.assertEqual(plot.aliases, expected)
         self.assertIsNot(plot.aliases, plot._dim_by_alias)
 
+
 class Test_cache(tests.IrisTest):
     def setUp(self):
         cube = realistic_3d()
         axes = tests.mock.sentinel.axes
+        self.draw = tests.mock.sentinel.draw
+        self.patcher = self.patch('cube_browser.Pyplot.draw',
+                                  return_value=self.draw)
         self.plot = Pyplot(cube, axes)
 
     def test_cache_create(self):
@@ -356,46 +368,240 @@ class Test_cache(tests.IrisTest):
     def test_cache_lookup(self):
         index = 0
         kwargs = dict(time=index)
-        subcube = self.plot._get_slice(kwargs)
+        result = self.plot(**kwargs)
+        self.assertEqual(result, self.draw)
+        args, _ = self.patcher.call_args
         expected = self.plot.cube[index]
-        self.assertEqual(subcube, expected)
+        self.assertEqual(args, (expected,))
         self.assertEqual(self.plot.subcube, expected)
         cache = self.plot.cache
         key = tuple(sorted(kwargs.items()))
+        self.assertEqual(len(cache.keys()), 1)
         self.assertIn(key, cache)
         self.assertEqual(cache[key], expected)
 
 
-class Test_coord_dims(tests.IrisTest):
-    def setUp(self):
-        self.cube = realistic_3d()
-        self.pcoords = ('grid_longitude',
-                        'grid_latitude')  # plot axis coordinates.
-        self.axes = tests.mock.sentinel.axes
-
-    def test(self):
-        cf = Pyplot(self.cube, self.axes, coords=self.pcoords)
-        actual = cf.coord_dims()
-        expected = dict(forecast_period=0,
-                        grid_latitude=1,
-                        grid_longitude=2,
-                        time=0)
-        self.assertEqual(actual, expected)
-        self.assertEqual(cf.coord_dim, expected)
-
-
-class Test_slider_coords(tests.IrisTest):
+class Test___init____plot_dims(tests.IrisTest):
     def setUp(self):
         self.cube = realistic_3d()
         self.axes = tests.mock.sentinel.axes
 
-    def test_slider_one(self):
+    def test_time_and_grid_latitude(self):
+        coords = ('time', 'grid_latitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = set([0, 1])
+        self.assertEqual(plot._plot_dims, expected)
+
+    def test_grid_latitude_and_grid_longitude(self):
+        coords = ('grid_latitude', 'grid_longitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = set([1, 2])
+        self.assertEqual(plot._plot_dims, expected)
+
+    def test_time_and_grid_longitude(self):
+        coords = ('time', 'grid_longitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = set([0, 2])
+        self.assertEqual(plot._plot_dims, expected)
+
+
+class Test__sliders_dim(tests.IrisTest):
+    def setUp(self):
+        self.cube = realistic_3d()
+        self.axes = tests.mock.sentinel.axes
+
+    def test_slider_time(self):
+        coords = ('grid_latitude', 'grid_longitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = dict(time=0)
+        self.assertEqual(plot._slider_dim_by_name, expected)
+
+    def test_slider_grid_latitude(self):
+        coords = ('time', 'grid_longitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = dict(grid_latitude=1)
+        self.assertEqual(plot._slider_dim_by_name, expected)
+
+    def test_slider_grid_longitude(self):
+        coords = ('time', 'grid_latitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = dict(grid_longitude=2)
+        self.assertEqual(plot._slider_dim_by_name, expected)
+
+    def test_slider_aux_forecast_period(self):
         coords = ('grid_longitude', 'grid_latitude')
-        cf = Pyplot(self.cube, self.axes, coords=coords)
-        actual = cf.slider_coords()
-        expected = self.cube.coord('time')
-        self.assertEqual(len(actual), 1)
-        self.assertEqual(actual[0], expected)
+        self.cube.remove_coord('time')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = dict(forecast_period=0)
+        self.assertEqual(plot._slider_dim_by_name, expected)
+
+    def test_slider_aux_sort(self):
+        coords = ('grid_longitude', 'grid_latitude')
+        self.cube.remove_coord('time')
+        coord = self.cube.coord('forecast_period').copy()
+        coord.rename('first')
+        self.cube.add_aux_coord(coord, 0)
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        expected = dict(first=0)
+        self.assertEqual(plot._slider_dim_by_name, expected)
+
+    def test_no_slider_from_aux(self):
+        coords = ('grid_longitude', 'grid_latitude')
+        self.cube.remove_coord('time')
+        fp = self.cube.coord('forecast_period')
+        self.cube.remove_coord('forecast_period')
+        aux = AuxCoord.from_coord(fp)
+        self.cube.add_aux_coord(aux, 0)
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        self.assertEqual(plot._slider_dim_by_name, {})
+
+
+class Test__invert_mapping(tests.IrisTest):
+    def setUp(self):
+        self.cube = realistic_3d()
+        self.axes = tests.mock.sentinel.axes
+
+    def test_bad_mapping(self):
+        mapping = dict(one=1, two=2, three=3, four=1)
+        emsg = 'Cannot invert non 1-to-1 mapping'
+        with self.assertRaisesRegexp(ValueError, emsg):
+            Pyplot._invert_mapping(mapping)
+
+    def test_invert_mapping(self):
+        mapping = dict(one=1, two=2, three=3, four=4)
+        expected = {1: 'one', 2: 'two', 3: 'three', 4: 'four'}
+        actual = Pyplot._invert_mapping(mapping)
+        self.assertEqual(actual, expected)
+
+
+class Test_sliders_axis(tests.IrisTest):
+    def setUp(self):
+        self.cube = realistic_3d()
+        self.axes = tests.mock.sentinel.axes
+
+    def _tidy(self, coord):
+        coord = coord.copy()
+        coord.bounds = None
+        coord.var_name = None
+        coord.attributes = None
+        return coord
+
+    def test_slider_time(self):
+        coords = ('grid_latitude', 'grid_longitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        original = self.cube.coord('time')
+        coord = self._tidy(original)
+        expected = AxisDefn(dim=0, name='time', size=7, coord=coord)
+        actual = plot.sliders_axis
+        self.assertEqual(actual, [expected])
+        self.assertIsNot(actual[0].coord, original)
+
+    def test_slider_grid_latitude(self):
+        coords = ('time', 'grid_longitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        original = self.cube.coord('grid_latitude')
+        coord = self._tidy(original)
+        expected = AxisDefn(dim=1, name='grid_latitude', size=9, coord=coord)
+        actual = plot.sliders_axis
+        self.assertEqual(actual, [expected])
+        self.assertIsNot(actual[0].coord, original)
+
+    def test_slider_grid_longitude(self):
+        coords = ('time', 'grid_latitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        original = self.cube.coord('grid_longitude')
+        coord = self._tidy(original)
+        expected = AxisDefn(dim=2, name='grid_longitude', size=11, coord=coord)
+        actual = plot.sliders_axis
+        self.assertEqual(actual, [expected])
+        self.assertIsNot(actual[0].coord, original)
+
+    def test_slider_alias(self):
+        plot = Pyplot(self.cube, self.axes)
+        plot.alias(time=0)
+        expected = AxisAlias(dim=0, name='time', size=7)
+        self.assertEqual(plot.sliders_axis, [expected])
+
+    def test_bad_slider_anonymous(self):
+        self.cube.remove_coord('time')
+        self.cube.remove_coord('forecast_period')
+        plot = Pyplot(self.cube, self.axes)
+        emsg = ("cube 'air_potential_temperature' has no meta-data "
+                'for dimension 0')
+        with self.assertRaisesRegexp(ValueError, emsg):
+            plot.sliders_axis
+
+
+class Test___call__(tests.IrisTest):
+    def setUp(self):
+        self.cube = realistic_3d()
+        self.axes = tests.mock.sentinel.axes
+        self.draw = tests.mock.sentinel.draw
+        self.patcher = self.patch('cube_browser.Pyplot.draw',
+                                  return_value=self.draw)
+
+    def test_bad_slider(self):
+        plot = Pyplot(self.cube, self.axes)
+        emsg = "called with unknown name 'wibble'"
+        with self.assertRaisesRegexp(ValueError, emsg):
+            plot(wibble=0)
+
+    def test_slider_slice(self):
+        index = 5
+        kwargs = dict(time=index)
+        plot = Pyplot(self.cube, self.axes)
+        result = plot(**kwargs)
+        self.assertEqual(result, self.draw)
+        args, _ = self.patcher.call_args
+        expected = plot.cube[index]
+        self.assertEqual(args, (expected,))
+        self.assertEqual(plot.subcube, expected)
+        cache = plot.cache
+        key = tuple(sorted(kwargs.items()))
+        self.assertEqual(len(cache.keys()), 1)
+        self.assertIn(key, cache)
+        self.assertEqual(cache[key], expected)
+
+    def test_slider_slice_warning(self):
+        index = 3
+        kwargs = dict(grid_longitude=index)
+        coords = ('time', 'grid_latitude')
+        plot = Pyplot(self.cube, self.axes, coords=coords)
+        plot.alias(wibble=2)
+        wmsg = ("expected to be called with alias 'wibble' for dimension 2, "
+                "rather than with 'grid_longitude'")
+        with warnings.catch_warnings():
+            # Cause all warnings to raise an exception.
+            warnings.simplefilter('error')
+            with self.assertRaisesRegexp(UserWarning, wmsg):
+                plot(**kwargs)
+
+    def test_slider_alias(self):
+        index = 7
+        kwargs = dict(wibble=index)
+        plot = Pyplot(self.cube, self.axes)
+        plot.alias(wibble=1)
+        result = plot(**kwargs)
+        self.assertEqual(result, self.draw)
+        args, _ = self.patcher.call_args
+        expected = plot.cube[:, index]
+        self.assertEqual(args, (expected,))
+        self.assertEqual(plot.subcube, expected)
+        cache = plot.cache
+        key = tuple(sorted(kwargs.items()))
+        self.assertEqual(len(cache.keys()), 1)
+        self.assertIn(key, cache)
+        self.assertEqual(cache[key], expected)
+
+
+class Test_draw(tests.IrisTest):
+    def test(self):
+        cube = realistic_3d()
+        axes = tests.mock.sentinel.axes
+        plot = Pyplot(cube, axes)
+        emsg = 'requires a draw method for rendering'
+        with self.assertRaisesRegexp(NotImplementedError, emsg):
+            plot(time=0)
 
 
 if __name__ == '__main__':
