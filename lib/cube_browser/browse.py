@@ -38,11 +38,13 @@ files = ipywidgets.SelectMultiple(
 
 # Load action.
 load_button = ipywidgets.Button(description="Load these Files!")
+load_button.cubes = []
+
 # Define load button action
 def handle_load(sender):
-    cubes = iris.load(files.value)
+    sender.cubes = iris.load(files.value)
     cube_picker.options = dict([(cube.summary(shorten=True), cube) for
-                                cube in cubes])
+                                cube in sender.cubes])
 load_button.on_click(handle_load)
 
 # Widget for cube description; currently non-functional:
@@ -86,6 +88,8 @@ y_coord = ipywidgets.Dropdown(
 
 # Plot action.
 plot_button = ipywidgets.Button(description="Plot my cube")
+plot_button.matplotlib_kwargs = {'cmap': 'seismic'}
+
 # Create a Box to manage the plot.
 plot_container = ipywidgets.Box()
 # Create the cube_browser.Pyplot and cube_browser.Browser
@@ -104,7 +108,8 @@ def goplot(sender):
             ax.coastlines()
         else:
             ax = fig.add_subplot(111)
-        conf = plot_type.value(cube, ax, coords=[x_name, y_name])
+        conf = plot_type.value(cube, ax, coords=[x_name, y_name],
+                               **sender.matplotlib_kwargs)
         browser = cube_browser.Browser(conf)
         plot_container.children = [browser.form]
 plot_button.on_click(goplot)
