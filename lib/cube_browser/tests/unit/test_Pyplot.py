@@ -13,7 +13,7 @@ from iris.coords import AuxCoord
 from iris.tests.stock import realistic_3d
 import numpy as np
 
-from cube_browser import Pyplot, AxisAlias, AxisDefn
+from cube_browser import Pyplot, _AxisAlias, _AxisDefn
 
 
 class Test__default_coords(tests.IrisTest):
@@ -491,7 +491,7 @@ class Test_sliders_axis(tests.IrisTest):
         plot = Pyplot(self.cube, self.axes, coords=coords)
         original = self.cube.coord('time')
         coord = self._tidy(original)
-        expected = AxisDefn(dim=0, name='time', size=7, coord=coord)
+        expected = _AxisDefn(dim=0, name='time', size=7, coord=coord)
         actual = plot.sliders_axis
         self.assertEqual(actual, [expected])
         self.assertIsNot(actual[0].coord, original)
@@ -501,7 +501,7 @@ class Test_sliders_axis(tests.IrisTest):
         plot = Pyplot(self.cube, self.axes, coords=coords)
         original = self.cube.coord('grid_latitude')
         coord = self._tidy(original)
-        expected = AxisDefn(dim=1, name='grid_latitude', size=9, coord=coord)
+        expected = _AxisDefn(dim=1, name='grid_latitude', size=9, coord=coord)
         actual = plot.sliders_axis
         self.assertEqual(actual, [expected])
         self.assertIsNot(actual[0].coord, original)
@@ -511,7 +511,8 @@ class Test_sliders_axis(tests.IrisTest):
         plot = Pyplot(self.cube, self.axes, coords=coords)
         original = self.cube.coord('grid_longitude')
         coord = self._tidy(original)
-        expected = AxisDefn(dim=2, name='grid_longitude', size=11, coord=coord)
+        expected = _AxisDefn(dim=2, name='grid_longitude', size=11,
+                             coord=coord)
         actual = plot.sliders_axis
         self.assertEqual(actual, [expected])
         self.assertIsNot(actual[0].coord, original)
@@ -519,7 +520,7 @@ class Test_sliders_axis(tests.IrisTest):
     def test_slider_alias(self):
         plot = Pyplot(self.cube, self.axes)
         plot.alias(time=0)
-        expected = AxisAlias(dim=0, name='time', size=7)
+        expected = _AxisAlias(dim=0, name='time', size=7)
         self.assertEqual(plot.sliders_axis, [expected])
 
     def test_bad_slider_anonymous(self):

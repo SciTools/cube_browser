@@ -24,14 +24,14 @@ if ipynb is not None:
     ipynb.magic(u"%autosave 0")
 
 
-class AxisAlias(namedtuple('AxisAlias', 'dim, name, size')):
+class _AxisAlias(namedtuple('_AxisAlias', 'dim, name, size')):
     def __eq__(self, other):
         result = NotImplemented
-        if isinstance(other, AxisAlias):
+        if isinstance(other, _AxisAlias):
             left = (self.name, self.size)
             right = (other.name, other.size)
             result = left == right
-        elif isinstance(other, AxisDefn):
+        elif isinstance(other, _AxisDefn):
             result = False
         return result
 
@@ -42,14 +42,14 @@ class AxisAlias(namedtuple('AxisAlias', 'dim, name, size')):
         return result
 
 
-class AxisDefn(namedtuple('AxisDefn', 'dim, name, size, coord')):
+class _AxisDefn(namedtuple('_AxisDefn', 'dim, name, size, coord')):
     def __eq__(self, other):
         result = NotImplemented
-        if isinstance(other, AxisDefn):
+        if isinstance(other, _AxisDefn):
             left = (self.name, self.size, self.coord)
             right = (other.name, other.size, other.coord)
             result = left == right
-        elif isinstance(other, AxisAlias):
+        elif isinstance(other, _AxisAlias):
             result = False
         return result
 
@@ -330,8 +330,8 @@ class Pyplot(object):
     @property
     def sliders_axis(self):
         """
-        Returns a list containing either an :class:`~cube_browser.AxisAlias`
-        or :class:`~cube_browser.AxisDefn` for each cube slider dimension.
+        Returns a list containing either an :class:`~cube_browser._AxisAlias`
+        or :class:`~cube_browser._AxisDefn` for each cube slider dimension.
 
         """
         shape = self.cube.shape
@@ -342,7 +342,7 @@ class Pyplot(object):
         for dim in dims:
             name = alias_by_dim.get(dim)
             if name is not None:
-                axis = AxisAlias(dim=dim, name=name, size=shape[dim])
+                axis = _AxisAlias(dim=dim, name=name, size=shape[dim])
             else:
                 name = slider_name_by_dim.get(dim)
                 if name is None:
@@ -354,8 +354,8 @@ class Pyplot(object):
                 coord.bounds = None
                 coord.var_name = None
                 coord.attributes = {}
-                axis = AxisDefn(dim=dim, name=name,
-                                size=coord.points.size, coord=coord)
+                axis = _AxisDefn(dim=dim, name=name,
+                                 size=coord.points.size, coord=coord)
             result.append(axis)
         return result
 
@@ -404,9 +404,6 @@ class Pyplot(object):
         """Abstract method."""
         emsg = '{!r} requires a draw method for rendering.'
         raise NotImplementedError(emsg.format(type(self).__name__))
-
-
-###############################################################################
 
 
 class Contourf(Pyplot):
@@ -472,7 +469,7 @@ class Pcolormesh(Pyplot):
                 coord = cube.coord(name)
                 if not coord.has_bounds():
                     coord.guess_bounds()
-                
+
         self.element = iplt.pcolormesh(cube, axes=self.axes,
                                        coords=self.coords, **self.kwargs)
         return self.element
@@ -481,8 +478,6 @@ class Pcolormesh(Pyplot):
         if self.element is not None:
             self.element.remove()
 
-
-###############################################################################
 
 class Browser(object):
     """
@@ -561,7 +556,7 @@ class Browser(object):
         for plot in self.plots:
             names = []
             for axis in plot.sliders_axis:
-                if isinstance(axis, AxisAlias):
+                if isinstance(axis, _AxisAlias):
                     if axis.name is None:
                         emsg = ('{!r} cube {!r} has no meta-data for '
                                 'dimension {}.')

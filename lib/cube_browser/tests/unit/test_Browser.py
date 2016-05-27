@@ -11,7 +11,7 @@ from iris.cube import CubeList
 from iris.tests import mock
 from iris.tests.stock import realistic_3d
 
-from cube_browser import Browser, Contour, AxisAlias, AxisDefn
+from cube_browser import Browser, Contour, _AxisAlias, _AxisDefn
 
 
 def _add_levels(cube, levels=13):
@@ -91,7 +91,7 @@ class Test__build_mappings(tests.IrisTest):
         name = 'time'
         coord = self._tidy(self.cube.coord(name))
         # Check axis_by_name.
-        axis = AxisDefn(dim=0, name=name, size=7, coord=coord)
+        axis = _AxisDefn(dim=0, name=name, size=7, coord=coord)
         expected = dict(time=axis)
         self.assertEqual(browser._axis_by_name, expected)
         # Check plots_by_name.
@@ -108,7 +108,7 @@ class Test__build_mappings(tests.IrisTest):
         plot.alias(wibble=0)
         browser = Browser(plot)
         # Check axis_by_name.
-        axis = AxisAlias(dim=0, name='wibble', size=7)
+        axis = _AxisAlias(dim=0, name='wibble', size=7)
         expected = dict(wibble=axis)
         self.assertEqual(browser._axis_by_name, expected)
         # Check plots_by_name.
@@ -141,7 +141,7 @@ class Test__build_mappings(tests.IrisTest):
         name = 'grid_longitude'
         coord = self._tidy(self.cube.coord(name))
         # Check axis_by_name.
-        axis = AxisDefn(dim=2, name=name, size=11, coord=coord)
+        axis = _AxisDefn(dim=2, name=name, size=11, coord=coord)
         expected = dict(grid_longitude=axis)
         self.assertEqual(browser._axis_by_name, expected)
         # Check plots_by_name.
@@ -165,10 +165,10 @@ class Test__build_mappings(tests.IrisTest):
         tcoord = self._tidy(self.cube.coord('time'))
         zcoord = self._tidy(other.coord('model_level_number'))
         # Check axis_by_name.
-        taxis1 = AxisDefn(dim=0, name='time', size=7, coord=tcoord)
-        taxis2 = AxisDefn(dim=1, name='time', size=7, coord=tcoord)
-        zaxis = AxisDefn(dim=0, name='model_level_number', size=levels,
-                         coord=zcoord)
+        taxis1 = _AxisDefn(dim=0, name='time', size=7, coord=tcoord)
+        taxis2 = _AxisDefn(dim=1, name='time', size=7, coord=tcoord)
+        zaxis = _AxisDefn(dim=0, name='model_level_number', size=levels,
+                          coord=zcoord)
         axis_by_name = browser._axis_by_name
         expected = dict(time=taxis1, model_level_number=zaxis)
         self.assertEqual(axis_by_name, expected)
@@ -199,9 +199,9 @@ class Test__build_mappings(tests.IrisTest):
         tcoord = self._tidy(self.cube.coord('time'))
         zcoord = self._tidy(other.coord('model_level_number'))
         # Check axis_by_name.
-        taxis = AxisDefn(dim=0, name='time', size=7, coord=tcoord)
-        zaxis = AxisDefn(dim=0, name='model_level_number', size=levels,
-                         coord=zcoord)
+        taxis = _AxisDefn(dim=0, name='time', size=7, coord=tcoord)
+        zaxis = _AxisDefn(dim=0, name='model_level_number', size=levels,
+                          coord=zcoord)
         axis_by_name = browser._axis_by_name
         expected = dict(time=taxis, model_level_number=zaxis)
         self.assertEqual(axis_by_name, expected)
@@ -228,7 +228,7 @@ class Test__build_mappings(tests.IrisTest):
         c2.alias(wibble=1)
         browser = Browser([c1, c2])
         # Check axis_by_name.
-        axis = AxisAlias(dim=1, name='wibble', size=9)
+        axis = _AxisAlias(dim=1, name='wibble', size=9)
         expected = dict(wibble=axis)
         self.assertEqual(browser._axis_by_name, expected)
         # Check plots_by_name.
