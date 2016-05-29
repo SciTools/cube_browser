@@ -19,7 +19,8 @@ __version__ = '0.1.0-dev'
 
 # Set default IPython magics if an IPython session has invoked the import.
 ipynb = IPython.get_ipython()
-if ipynb is not None:
+
+if ipynb is not None:  # pragma: no cover
     ipynb.magic(u"%matplotlib notebook")
     ipynb.magic(u"%autosave 0")
 

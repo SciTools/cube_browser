@@ -386,6 +386,12 @@ class Test___init____plot_dims(tests.IrisTest):
         self.cube = realistic_3d()
         self.axes = tests.mock.sentinel.axes
 
+    def test_bad_ndim(self):
+        cube = self.cube[0, 0]
+        emsg = 'requires at least a 2d cube, got 1d'
+        with self.assertRaisesRegexp(ValueError, emsg):
+            Pyplot(cube, self.axes)
+
     def test_time_and_grid_latitude(self):
         coords = ('time', 'grid_latitude')
         plot = Pyplot(self.cube, self.axes, coords=coords)
