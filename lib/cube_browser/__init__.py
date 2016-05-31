@@ -12,7 +12,6 @@ from iris.coords import Coord, DimCoord
 import iris.plot as iplt
 import matplotlib.pyplot as plt
 
-
 # Cube-browser version.
 __version__ = '0.1.0-dev'
 
@@ -523,16 +522,16 @@ class Browser(object):
                 self._slider_by_name[axis.name] = slider
                 self._name_by_slider_id[id(slider)] = axis.name
 
-        self._form = ipywidgets.VBox()
+        self.form = ipywidgets.VBox()
         # Layout the sliders in a consitent order.
         slider_names = sorted(self._slider_by_name)
         sliders = [self._slider_by_name[name] for name in slider_names]
-        self._form.children = sliders
+        self.form.children = sliders
 
     def display(self):
         # XXX: Ideally, we might want to register an IPython display hook.
         self.on_change(None)
-        IPython.display.display(self._form)
+        IPython.display.display(self.form)
 
     def _build_mappings(self):
         """
