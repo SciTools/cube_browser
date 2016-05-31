@@ -19,12 +19,13 @@ class Test__call__(tests.IrisTest):
     def setUp(self):
         self.cube = realistic_3d()
         self.coords = ('grid_longitude', 'grid_latitude')
-        for coord in self.coords:
-            self.cube.coord(coord).guess_bounds()
+        self.projection = iplt.default_projection(self.cube)
 
-    def test_plot_type(self):
-        projection = iplt.default_projection(self.cube)
-        ax = plt.subplot(111, projection=projection)
+    def test_without_bounds(self):
+        for coord in self.coords:
+            coord = self.cube.coord(coord)
+            coord.bounds = None
+        ax = plt.subplot(111, projection=self.projection)
         plot = Pcolormesh(self.cube, ax, coords=self.coords)
         for index in range(self.cube.shape[0]):
             element = plot(time=index)
@@ -32,6 +33,28 @@ class Test__call__(tests.IrisTest):
             self.assertEqual(element, plot.element)
             self.assertIsInstance(plot.axes, GeoAxesSubplot)
             self.assertEqual(ax, plot.axes)
+            for coord in self.coords:
+                self.assertTrue(plot.subcube.coord(coord).has_bounds())
+            subcube = self.cube[index]
+            for coord in self.coords:
+                subcube.coord(coord).guess_bounds()
+            self.assertEqual(subcube, plot.subcube)
+
+    def test_with_bounds(self):
+        for coord in self.coords:
+            coord = self.cube.coord(coord)
+            if not coord.has_bounds():
+                coord.guess_bounds()
+        ax = plt.subplot(111, projection=self.projection)
+        plot = Pcolormesh(self.cube, ax, coords=self.coords)
+        for index in range(self.cube.shape[0]):
+            element = plot(time=index)
+            self.assertIsInstance(element, QuadMesh)
+            self.assertEqual(element, plot.element)
+            self.assertIsInstance(plot.axes, GeoAxesSubplot)
+            self.assertEqual(ax, plot.axes)
+            for coord in self.coords:
+                self.assertTrue(plot.subcube.coord(coord).has_bounds())
             self.assertEqual(self.cube[index], plot.subcube)
 
 
