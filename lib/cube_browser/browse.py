@@ -88,7 +88,7 @@ y_coord = ipywidgets.Dropdown(
 plot_button = ipywidgets.Button(description="Plot my cube")
 # Create a Box to manage the plot.
 plot_container = ipywidgets.Box()
-# Create the cube_browser.Pyplot and cube_browser.Browser
+# Create the cube_browser.Plot2D and cube_browser.Browser
 # and mkae them the children of the plot_button's container.
 def goplot(sender):
     cube = cube_picker.value

@@ -61,7 +61,7 @@ class _AxisDefn(namedtuple('_AxisDefn', 'dim, name, size, coord')):
         return result
 
 
-class Pyplot(object):
+class Plot2D(object):
     def __init__(self, cube, axes, **kwargs):
         """
         Args:
@@ -407,7 +407,7 @@ class Pyplot(object):
         raise NotImplementedError(emsg.format(type(self).__name__))
 
 
-class Contourf(Pyplot):
+class Contourf(Plot2D):
     """
     Constructs a filled contour plot instance of a cube.
 
@@ -431,7 +431,7 @@ class Contourf(Pyplot):
                 collection.remove()
 
 
-class Contour(Pyplot):
+class Contour(Plot2D):
     """
     Constructs a line contour plot instance of a cube.
 
@@ -453,7 +453,7 @@ class Contour(Pyplot):
                 collection.remove()
 
 
-class Pcolormesh(Pyplot):
+class Pcolormesh(Plot2D):
     """
     Constructs a pseduocolour plot instance of a cube on a quadrilateral mesh.
 
