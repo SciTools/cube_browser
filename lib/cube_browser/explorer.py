@@ -21,7 +21,7 @@ class Explorer(object):
         # Observe the path.
         self.path.observe(self.handle_path, names='value')
         # Use default path value to initialise file options.
-        self.options = glob.glob('{}/*'.format(self.path.value))
+        self.options = ['None'] + glob.glob('{}/*'.format(self.path.value))
         self.options.sort()
         # Defines the files selected to be loaded.
         self.files = ipywidgets.SelectMultiple(
@@ -41,7 +41,7 @@ class Explorer(object):
         # Defines the cube which is to be plotted.
         self.cube_picker = ipywidgets.Dropdown(
             description='Cubes:',
-            options={},
+            options={'None': None},
             width='100%'
         )
 
@@ -58,11 +58,11 @@ class Explorer(object):
 
         self.x_coord = ipywidgets.Dropdown(
             description='X Coordinate',
-            options={}
+            options=['None']
         )
         self.y_coord = ipywidgets.Dropdown(
             description='Y Coordinate',
-            options={}
+            options=['None']
         )
 
         # Plot action.
@@ -89,22 +89,22 @@ class Explorer(object):
 
     def handle_path(self, sender):
         """Path box action."""
-        options = glob.glob('{}/*'.format(self.path.value))
+        options = ['None'] + glob.glob('{}/*'.format(self.path.value))
         options.sort()
         self.files.options = options
 
     def handle_load(self, sender):
         """Load button action."""
         self.cubes = iris.load(self.files.value)
-        self.cube_picker.options = dict([(cube.summary(shorten=True), cube) for
+        self.cube_picker.options = dict([('None', None)] + [(cube.summary(shorten=True), cube) for
                                          cube in self.cubes])
 
     def handle_cube_selection(self, sender):
         """Cube selector action."""
-        self.x_coord.options = [coord.name() for coord in
+        self.x_coord.options = ['None'] + [coord.name() for coord in
                            self.cube_picker.value.coords(dim_coords=True)]
         self.x_coord.value = self.cube_picker.value.coord(axis='X').name()
-        self.y_coord.options = [coord.name() for coord in
+        self.y_coord.options = ['None'] + [coord.name() for coord in
                            self.cube_picker.value.coords(dim_coords=True)]
         self.y_coord.value = self.cube_picker.value.coord(axis='Y').name()
 

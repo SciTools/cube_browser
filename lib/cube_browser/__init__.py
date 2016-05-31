@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division, print_function)
 from six.moves import (filter, input, map, range, zip)  # noqa
 import six
 
-from collections import Iterable, namedtuple
+from collections import Iterable, namedtuple, OrderedDict
 import warnings
 from weakref import WeakValueDictionary
 
@@ -516,11 +516,15 @@ class Browser(object):
         self._slider_by_name = {}
         self._name_by_slider_id = {}
         for axis in self._axis_by_name.values():
-                slider = ipywidgets.IntSlider(min=0, max=axis.size - 1,
-                                              description=axis.name)
-                slider.observe(self.on_change, names='value')
-                self._slider_by_name[axis.name] = slider
-                self._name_by_slider_id[id(slider)] = axis.name
+            if axis.coord.units.is_time_reference():
+                options = OrderedDict([(axis.coord.units.num2date(axis.coord.points[i]), i) for i in range(axis.size)])
+            else:
+                options = OrderedDict([(axis.coord.points[i], i) for i in range(axis.size)])
+            slider = ipywidgets.SelectionSlider(description=axis.name,
+                                                options=options)
+            slider.observe(self.on_change, names='value')
+            self._slider_by_name[axis.name] = slider
+            self._name_by_slider_id[id(slider)] = axis.name
 
         self.form = ipywidgets.VBox()
         # Layout the sliders in a consitent order.
