@@ -7,6 +7,8 @@ import warnings
 from weakref import WeakValueDictionary
 
 import IPython
+from IPython.display import set_matplotlib_formats
+
 import ipywidgets
 from iris.coords import Coord, DimCoord
 import iris.plot as iplt
@@ -20,9 +22,11 @@ __version__ = '0.1.0-dev'
 ipynb = IPython.get_ipython()
 
 if ipynb is not None:  # pragma: no cover
-    ipynb.magic(u"%matplotlib notebook")
+    #ipynb.magic(u"output size=300 backend='matplotlib:nbagg'")
+    ipynb.magic(u"%matplotlib nbagg")
     ipynb.magic(u"%autosave 0")
-
+    #ipynb.magic(u"%matplotlib output size 200")
+    #set_matplotlib_formats('png', 'pdf', 'svg')
 
 class _AxisAlias(namedtuple('_AxisAlias', 'dim, name, size')):
     def __eq__(self, other):
@@ -420,6 +424,8 @@ class Contourf(Plot2D):
     def draw(self, cube):
         self.element = iplt.contourf(cube, axes=self.axes, coords=self.coords,
                                      **self.kwargs)
+        if 'levels' not in self.kwargs:
+            self.kwargs['levels'] = self.element.levels
         return self.element
 
     # XXX: Not sure this should live here!
@@ -444,6 +450,8 @@ class Contour(Plot2D):
     def draw(self, cube):
         self.element = iplt.contour(cube, axes=self.axes, coords=self.coords,
                                     **self.kwargs)
+        if 'levels' not in self.kwargs:
+            self.kwargs['levels'] = self.element.levels
         return self.element
 
     def clear(self):
@@ -472,6 +480,8 @@ class Pcolormesh(Plot2D):
 
         self.element = iplt.pcolormesh(cube, axes=self.axes,
                                        coords=self.coords, **self.kwargs)
+        if 'clim' not in self.kwargs:
+            self.kwargs['clim'] = self.element.get_clim()
         return self.element
 
     def clear(self):
@@ -539,6 +549,7 @@ class Browser(object):
     def display(self):
         # XXX: Ideally, we might want to register an IPython display hook.
         self.on_change(None)
+        
         IPython.display.display(self.form)
 
     def _build_mappings(self):
@@ -600,7 +611,7 @@ class Browser(object):
         all appropriate plots given a slider state change.
 
         """
-        def _update(plots, force=False):
+        def _update(plots, force=False, cbar=False):
             for plot in plots:
                 plot.clear()
             for plot in plots:
@@ -612,12 +623,16 @@ class Browser(object):
                 if names is not None:
                     kwargs = {name: slider_by_name[name].value
                               for name in names}
-                    plot(**kwargs)
+                    # plot(**kwargs)
+                    mappable = plot(**kwargs)
+                    if cbar:
+                        plt.colorbar(mappable, ax=plot.axes,
+                                     orientation='horizontal')
 
         slider_by_name = self._slider_by_name
         if change is None:
             # Initial render of all the plots.
-            _update(self.plots, force=True)
+            _update(self.plots, force=True, cbar=True)
         else:
             # A widget slider state has changed, so only refresh
             # the appropriate plots.
