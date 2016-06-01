@@ -31,8 +31,10 @@ bug reports and feature requests on our
    :maxdepth: 2
 
    Home <self>
-   browsers/intro
-   userGuide/intro
+   explorers/intro
+   browsing_cubes/intro
    ref_docs
+   write_your_own/intro
+
 
    Github source <https://github.com/SciTools/cube_browser>

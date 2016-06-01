@@ -1,4 +1,8 @@
 Reference Documentation
 =======================
 
-Reference docs...
+Cube Browser API
+----------------
+
+.. automodule:: cube_browser
+   :members:
