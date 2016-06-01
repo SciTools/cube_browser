@@ -31,6 +31,7 @@ install:
   # Customise the testing environment
   # ---------------------------------
   - conda config --add channels scitools
+  - conda config --add channels conda-forge
   - conda install iris=${iris} pip
   - conda install ipywidgets
   - pip install coveralls
