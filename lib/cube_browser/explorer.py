@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import glob
 import IPython.display
 import ipywidgets
@@ -40,9 +41,10 @@ class Explorer(object):
 
         # Defines the cube which is to be plotted.
         self.cube_picker = ipywidgets.Dropdown(
-            description='Cubes:',
-            options={'None': None},
-            width='100%'
+            description = 'Cubes:',
+            options = {'None': None},
+            value = None,
+            width = '100%'
         )
 
         self.cube_picker.observe(self.handle_cube_selection, names='value')
@@ -89,24 +91,30 @@ class Explorer(object):
 
     def handle_path(self, sender):
         """Path box action."""
-        options = ['None'] + glob.glob('{}/*'.format(self.path.value))
+        options = glob.glob('{}/*'.format(self.path.value))
         options.sort()
+        self.files.value = ()
         self.files.options = options
 
     def handle_load(self, sender):
         """Load button action."""
+        self.cube_picker.options['None'] = None
         self.cubes = iris.load(self.files.value)
-        self.cube_picker.options = dict([('None', None)] + [(cube.summary(shorten=True), cube) for
-                                         cube in self.cubes])
+        options = [(cube.summary(shorten=True), cube) for cube in self.cubes]
+        self.cube_picker.value = None
+        self.cube_picker.options = dict([('None', None)] + options)
+        self.cube_picker.value = options[0][1]
+        self.cube_picker.options = dict(options)
 
     def handle_cube_selection(self, sender):
         """Cube selector action."""
-        self.x_coord.options = ['None'] + [coord.name() for coord in
-                           self.cube_picker.value.coords(dim_coords=True)]
-        self.x_coord.value = self.cube_picker.value.coord(axis='X').name()
-        self.y_coord.options = ['None'] + [coord.name() for coord in
-                           self.cube_picker.value.coords(dim_coords=True)]
-        self.y_coord.value = self.cube_picker.value.coord(axis='Y').name()
+        if self.cube_picker.value is not None:
+            self.x_coord.options = ['None'] + [coord.name() for coord in
+                               self.cube_picker.value.coords(dim_coords=True)]
+            self.x_coord.value = self.cube_picker.value.coord(axis='X').name()
+            self.y_coord.options = ['None'] + [coord.name() for coord in
+                               self.cube_picker.value.coords(dim_coords=True)]
+            self.y_coord.value = self.cube_picker.value.coord(axis='Y').name()
 
     def goplot(self, sender):
         """Create the cube_browser.Plot2D and cube_browser.Browser"""

@@ -517,9 +517,11 @@ class Browser(object):
         self._name_by_slider_id = {}
         for axis in self._axis_by_name.values():
             if axis.coord.units.is_time_reference():
-                options = OrderedDict([(axis.coord.units.num2date(axis.coord.points[i]), i) for i in range(axis.size)])
+                opts = [(axis.coord.units.num2date(axis.coord.points[i]), i)
+                        for i in range(axis.size)]
             else:
-                options = OrderedDict([(axis.coord.points[i], i) for i in range(axis.size)])
+                opts = [(axis.coord.points[i], i) for i in range(axis.size)]
+            options = OrderedDict(opts)
             slider = ipywidgets.SelectionSlider(description=axis.name,
                                                 options=options)
             slider.observe(self.on_change, names='value')
