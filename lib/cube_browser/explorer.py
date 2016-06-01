@@ -103,8 +103,11 @@ class Explorer(object):
         options = [(cube.summary(shorten=True), cube) for cube in self.cubes]
         self.cube_picker.value = None
         self.cube_picker.options = dict([('None', None)] + options)
-        self.cube_picker.value = options[0][1]
-        self.cube_picker.options = dict(options)
+        try:
+            self.cube_picker.value = options[0][1]
+            self.cube_picker.options = dict(options)
+        except Exception:
+            pass
 
     def handle_cube_selection(self, sender):
         """Cube selector action."""
