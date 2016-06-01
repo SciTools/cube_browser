@@ -29,7 +29,7 @@ class Test__build_mappings__cache(tests.IrisTest):
         self.cube = realistic_3d()
         self.axes = mock.sentinel.axes
         self.patch('IPython.display.display')
-        self.patch('ipywidgets.IntSlider')
+        self.patch('ipywidgets.SelectionSlider')
         self.patch('ipywidgets.VBox')
         self.patch('cube_browser.Browser.on_change')
 
@@ -63,7 +63,7 @@ class Test__build_mappings(tests.IrisTest):
         self.cube = realistic_3d()
         self.axes = mock.sentinel.axes
         self.patch('IPython.display.display')
-        self.patch('ipywidgets.IntSlider')
+        self.patch('ipywidgets.SelectionSlider')
         self.patch('ipywidgets.VBox')
         self.patch('cube_browser.Browser.on_change')
 
@@ -281,7 +281,7 @@ class Test_on_change(tests.IrisTest):
         self.patch('IPython.display.display')
         self.value = mock.sentinel.value
         mockers = [mock.Mock(value=self.value) for i in range(20)]
-        self.patch('ipywidgets.IntSlider', side_effect=mockers)
+        self.patch('ipywidgets.SelectionSlider', side_effect=mockers)
         self.patch('ipywidgets.VBox')
 
     def test(self):

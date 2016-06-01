@@ -516,11 +516,13 @@ class Browser(object):
         self._slider_by_name = {}
         self._name_by_slider_id = {}
         for axis in self._axis_by_name.values():
-            if axis.coord.units.is_time_reference():
+            if hasattr(axis, 'coord') and axis.coord.units.is_time_reference():
                 opts = [(axis.coord.units.num2date(axis.coord.points[i]), i)
                         for i in range(axis.size)]
-            else:
+            elif hasattr(axis, 'coord'):
                 opts = [(axis.coord.points[i], i) for i in range(axis.size)]
+            else:
+                opts = [(i, i) for i in range(axis.size)]
             options = OrderedDict(opts)
             slider = ipywidgets.SelectionSlider(description=axis.name,
                                                 options=options)
