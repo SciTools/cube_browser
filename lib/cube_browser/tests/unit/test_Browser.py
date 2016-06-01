@@ -85,6 +85,17 @@ class Test__build_mappings(tests.IrisTest):
         # Check names_by_plot_id.
         self.assertEqual(browser._names_by_plot_id, {})
 
+    def test_single_plot_with_axis_no_metadata(self):
+        plot = Contour(self.cube, self.axes)
+        with mock.patch('cube_browser.Contour.sliders_axis',
+                        new_callable=mock.PropertyMock) as sliders_axis:
+            alias = _AxisAlias(dim=0, name=None, size=7)
+            sliders_axis.return_value = [alias]
+            emsg = ("cube {!r} has no meta-data "
+                    "for dimension 0".format(self.cube.name()))
+            with self.assertRaisesRegexp(ValueError, emsg):
+                Browser(plot)
+
     def test_single_plot_with_axis(self):
         plot = Contour(self.cube, self.axes)
         browser = Browser(plot)
