@@ -4,6 +4,12 @@ env:
   - python=2.7
     iris=1.9
 
+  - python=3.4
+    iris=1.9
+
+  - python=3.5
+    iris=1.9
+
 sudo: false
 
 git:
