@@ -264,7 +264,7 @@ class Plot2D(object):
                             'dimension {} expected {}.')
                     raise ValueError(emsg.format(name, dim, dims[0]))
             # Check there are no alias covering the same dimension.
-            if dim in self._dim_by_alias.values():
+            if dim in list(self._dim_by_alias.values()):
                 emsg = ('Dimension alias {!r} covers the same dimension '
                         'as alias {!r}.')
                 alias_by_dim = self._invert_mapping(self._dim_by_alias)
@@ -324,7 +324,7 @@ class Plot2D(object):
         if len(keys) != len(values):
             emsg = 'Cannot invert non 1-to-1 mapping, got {!r}.'
             raise ValueError(emsg.format(mapping))
-        result = dict(map(lambda (k, v): (v, k), mapping.items()))
+        result = dict([(k_v[1], k_v[0]) for k_v in list(mapping.items())])
         return result
 
     @property
