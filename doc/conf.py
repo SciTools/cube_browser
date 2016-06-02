@@ -3,8 +3,6 @@
 import sys, os
 sys.path.insert(0, os.getcwd())
 
-from builder.shared_conf import * # noqa (API import)
-
 # # General information about the project.
 project = u'CubeBrowser'
 copyright = u'2016, CubeBrowser developers'
@@ -28,6 +26,13 @@ html_favicon = ''
 # -------------------------------------------------------------------------
 # -- The remaining items are less likely to need changing for a new project
 
+# The master toctree document.
+master_doc = 'index'
+
+# Add any Sphinx extension module names here, as strings. They can be extensions
+# coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
+extensions = ['sphinx.ext.autodoc']
+
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build', 'test_data', 'reference_data', 'nbpublisher',
@@ -40,7 +45,7 @@ html_title = project
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static', 'builder/_shared_static']
+html_static_path = ['_static']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = module+'doc'
@@ -77,16 +82,3 @@ intersphinx_mapping = {'http://docs.python.org/': None,
 
 js_includes = ['js/theme.js', 'bootstrap.js', 'custom.js', 'require.js']
 
-from nbpublisher import nbbuild
-
-
-def setup(app):
-    for js in js_includes:
-        app.add_javascript(js)
-
-    try:
-        import runipy # noqa (Warning import)
-        nbbuild.setup(app)
-    except:
-        print('RunIPy could not be imported; pages including the '
-              'Notebook directive will not build correctly')
