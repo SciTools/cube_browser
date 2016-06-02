@@ -13,6 +13,7 @@ IPython.display.clear_output()
 class Explorer(object):
     """
     IPyWidgets and workflow for exploring collections of cubes.
+
     """
     def __init__(self):
         # Define the file system path for input files.
@@ -20,7 +21,7 @@ class Explorer(object):
             description='Path:',
             value=iris.sample_data_path('GloSea4'))
         # Observe the path.
-        self._path.observe(self.handle_path, names='value')
+        self._path.observe(self._handle_path, names='value')
         # Use default path value to initialise file options.
         self._file_options = ['None'] + glob.glob('{}/*'.format(self._path.value))
         self._file_options.sort()
@@ -73,17 +74,18 @@ class Explorer(object):
             setattr(self, '_{}_plot_cmap'.format(label),
                     ipywidgets.Text(
                         description='colour map',
-                        value='viridis'
                     ))
 
         self._a_plot_cube_picker.observe(self._handle_a_cube_selection, names='value')
         self._b_plot_cube_picker.observe(self._handle_b_cube_selection, names='value')
+        self._a_plot_cmap.observe(self._handle_a_cmap, names='value')
+        self._b_plot_cmap.observe(self._handle_b_cmap, names='value')
 
         # Plot action.
         self._plot_button = ipywidgets.Button(description="Plot my cube")
         # Create a Box to manage the plot.
         self._plot_container = ipywidgets.Box()
-        self._plot_button.on_click(self.goplot)
+        self._plot_button.on_click(self._goplot)
 
         # Define a container for the main controls in the browse interface.
         self.container = ipywidgets.Box(children=[self._path, self._files,
@@ -107,7 +109,9 @@ class Explorer(object):
 
         self.plot_container = ipywidgets.HBox(children=[self._a_plot_container,
                                                        self._b_plot_container])
-                                             
+
+        self._a_plot_mpl_kwargs = {}
+        self._b_plot_mpl_kwargs = {}
         # Display the browse interface.
         IPython.display.display(self.container)
         IPython.display.display(self.plot_container)
@@ -116,22 +120,42 @@ class Explorer(object):
         IPython.display.display(self._plot_container)
 
     @property
+    def a_plot_mpl_kwargs(self):
+        """
+        The dictionary of matplotlib keyword arguements in use for 'plot a'.
+
+        """
+        return self._a_plot_mpl_kwargs
+
+    @a_plot_mpl_kwargs.setter
+    def a_plot_mpl_kwargs(self, value):
+        self._a_plot_mpl_kwargs = value
+    
+    @property
+    def b_plot_mpl_kwargs(self):
+        """
+        The dictionary of matplotlib keyword arguements in use for 'plot b'.
+
+        """
+        return self._b_plot_mpl_kwargs
+
+    @b_plot_mpl_kwargs.setter
+    def b_plot_mpl_kwargs(self, value):
+        self._b_plot_mpl_kwargs = value
+
+    @property
     def cubes(self):
         """The list of cubes the explorer is currenlty working with."""
         return self._cubes
 
-    @property
-    def a_plot_mpl_kwargs(self):
-        kwargs = {}
-        kwargs['cmap'] = self._a_plot_cmap.value
-        return kwargs
-
-    @property
-    def b_plot_mpl_kwargs(self):
-        kwargs = {}
-        kwargs['cmap'] = self._b_plot_cmap.value
-        return kwargs
-
+    def _handle_a_cmap(self, sender):
+        cmap_string = self._a_plot_cmap.value
+        self.a_plot_mpl_kwargs['cmap'] = cmap_string
+        
+    def _handle_b_cmap(self, sender):
+        cmap_string = self._b_plot_cmap.value
+        self.b_plot_mpl_kwargs['cmap'] = cmap_string
+        
     def update_cubes_list(self):
         """Update the list of cubes available in the Explorer."""
         options = [(cube.summary(shorten=True), cube) for cube in self._cubes]
@@ -146,7 +170,7 @@ class Explorer(object):
         #     pass
         
 
-    def handle_path(self, sender):
+    def _handle_path(self, sender):
         """Path box action."""
         options = glob.glob('{}/*'.format(self._path.value))
         options.sort()
@@ -179,7 +203,7 @@ class Explorer(object):
                                self._b_plot_cube_picker.value.coords(dim_coords=True)]
             self._b_plot_y_coord.value = self._b_plot_cube_picker.value.coord(axis='Y').name()
 
-    def goplot(self, sender):
+    def _goplot(self, sender):
         """Create the cube_browser.Plot2D and cube_browser.Browser"""
         IPython.display.clear_output()
         fig = plt.figure(figsize=(13, 8))
@@ -218,4 +242,6 @@ class Explorer(object):
                                              **mpl_kwargs))
         self.browser = cube_browser.Browser(confs)
         self.browser.on_change(None)
+        for label, plot in zip(['a_', 'b_'], confs):
+            setattr(self, '{}plot_mpl_kwargs'.format(label), plot.kwargs)
         self._plot_container.children = [self.browser.form]
