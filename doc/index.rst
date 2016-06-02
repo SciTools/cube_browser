@@ -25,6 +25,7 @@ To do this, you can use the `guide<browsing_cubes/info.html>`_ and `reference<re
 In the same way that we have constructed our Explorers, you can make use of Ipywidgets to string together your own cube plotting process.
 We have provided some `developer documentation<write_your_own/intro.html>`_ illustrating how to use IPywidgets to build a work flow as general or as specialized as you need.
 This could be useful if you have a specific combination of plots which you use frequently and repeatedly.
+`Click here<../lib/cube_browser/explorer.py>`_ to see the source code for the Explorer we have provided.
 
 Installation
 ____________
