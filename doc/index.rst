@@ -55,9 +55,9 @@ bug reports and feature requests on our
 
    Home <self>
    explorers/intro
-   browsing_cubes/intro
+   browsingCubes/intro
    ref_docs
-   write_your_own/intro
+   writeYourOwn/intro
 
 
    Github source <https://github.com/SciTools/cube_browser>
