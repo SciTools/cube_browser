@@ -1,2 +1,0 @@
-Browsing Cubes
-==============

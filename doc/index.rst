@@ -4,7 +4,9 @@
 Introduction
 ____________
 
-.. notebook:: cubebrowser Homepage.ipynb
+Description of different methods of using Cube Browser, like a Browser (or Explorer) and a self-constructed notebook.
+
+Lots more information here, obviously.
 
 Installation
 ____________
@@ -29,9 +31,10 @@ bug reports and feature requests on our
    :maxdepth: 2
 
    Home <self>
-   writingNotebooks/intro
-   developingCubeBrowsers/intro
-   browsingCubes/intro
-   cube_browser/api
+   explorers/intro
+   browsing_cubes/intro
+   ref_docs
+   write_your_own/intro
+
 
    Github source <https://github.com/SciTools/cube_browser>
