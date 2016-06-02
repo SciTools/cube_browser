@@ -16,15 +16,14 @@ These are available to download or to run straight from your internet browser.
 
 2. Browsing cubes:
 
-You may want to use the Cube Browser API to write a short python code which will make your plots, instead of using the Explorer.
+You may want to use the Cube Browser API to write a Jupyter notebook to make a simple or complicated interactive visualisation.
 This will give you more flexibility in the way you would like to plot your data and how you would like it laid out and customized.
 To do this, you can use the `guide<browsing_cubes/info.html>`_ and `reference<ref_docs.html>`_ pages.
 
 3. Writing your own cube browser:
 
 In the same way that we have constructed our Explorers, you can make use of Ipywidgets to string together your own cube plotting process.
-We have laid out a set of instructions to take you step-by-step through `writing a cube browser<write_your_own/intro.html>`_,
-so you can make a work flow as general or as specialized as you need.
+We have provided some `developer documentation<write_your_own/intro.html>`_ illustrating how to use IPywidgets to build a work flow as general or as specialized as you need.
 This could be useful if you have a specific combination of plots which you use frequently and repeatedly.
 
 Installation
