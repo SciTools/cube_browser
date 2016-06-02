@@ -25,7 +25,8 @@ class FilePicker(object):
         # Observe the path.
         self._path.observe(self._handle_path, names='value')
         # Use default path value to initialise file options.
-        self._file_options = ['None'] + glob.glob('{}/*'.format(self._path.value))
+        # self._file_options = ['None'] + glob.glob('{}/*'.format(self._path.value))
+        self._file_options = glob.glob('{}/*'.format(self._path.value))
         self._file_options.sort()
         # Defines the files selected to be loaded.
         self._files = ipywidgets.SelectMultiple(
@@ -134,8 +135,10 @@ class Explorer(object):
     def __init__(self):
         self.file_pickers = [FilePicker()]
         # Load action.
-        self._load_button = ipywidgets.Button(description="Load these Files!")
+        self._load_button = ipywidgets.Button(description="load these files")
         self._load_button.on_click(self._handle_load)
+        self._file_tab_button = ipywidgets.Button(description="add tab")
+        self._file_tab_button.on_click(self._handle_new_tab)
 
         self._subplots = ipywidgets.RadioButtons(
             description = 'subplots',
@@ -152,9 +155,10 @@ class Explorer(object):
     def layout(self):
         self._plot_container = ipywidgets.Box()
         # Define a container for the main controls in the browse interface.
-        ftabs = ipywidgets.Tab(children=[fp.box for fp in self.file_pickers])
-        self._file_picker_tabs = ipywidgets.Box(children=[ftabs,
-                                                      self._load_button])
+        self.ftabs = ipywidgets.Tab(children=[fp.box for fp in self.file_pickers])
+        self.bbox = ipywidgets.HBox(children=[self._load_button,
+                                         self._file_tab_button])
+        self._file_picker_tabs = ipywidgets.Box(children=[self.ftabs, self.bbox])
 
         pcc_children = [pc.box for pc in self.plot_controls]
         self._plot_control_container = ipywidgets.Tab(children=pcc_children)
@@ -204,6 +208,11 @@ class Explorer(object):
         self._cubes = iris.load(selected_files)
         self.update_cubes_list()
 
+    def _handle_new_tab(self, sender):
+        """Add new file tab."""
+        self.file_pickers.append(FilePicker())
+        self.ftabs = ipywidgets.Tab(children=[fp.box for fp in self.file_pickers])
+        self._file_picker_tabs.children = [self.ftabs, self.bbox]
 
     def _goplot(self, sender):
         """Create the cube_browser.Plot2D and cube_browser.Browser"""
