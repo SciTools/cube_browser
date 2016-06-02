@@ -4,7 +4,7 @@ Explorers
 An Explorer is a Jupyter notebook containing IPython widgets which allow the user to select a set of options in order to plot an Iris cube.
 
 For our first release of Cube Browser we have constructed one such work flow, which you can access via the links below to either run directly from this web browser or download and run from your desktop.
-This Explorer allows the user to choose and load one or more cube(s) cube from the desired data path, then choose the plot type and the coordinates for the X and Y axis, and make either one or two plot.
+This Explorer allows the user to choose and load one or more cube(s) from the desired data path, then choose the plot type and the coordinates for the X and Y axis, and make either one or two plot.
 The default data path is the GloSea4 ensemble data in the Iris sample data directory, but you can change this to the location of your own data to find the files you need.
 
 Links to Cube Explorers
