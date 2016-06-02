@@ -5,6 +5,7 @@ import ipywidgets
 import iris
 import matplotlib.pyplot as plt
 import os
+from traits.api import TraitList
 
 import cube_browser
 
@@ -110,11 +111,15 @@ class PlotControl(object):
         cmap_string = self.cmap.value
         if cmap_string and cmap_string in cmap_d.keys():
             self.mpl_kwargs['cmap'] = cmap_string
+            self.cmap.description = 'colour map'
+        else:
+            self.cmap.description = 'not a cmap'
 
     def _handle_plot_type(self, sender):
         cmap = self.cmap.value
         self.mpl_kwargs = {}
-        self.mpl_kwargs['cmap'] = cmap
+        if cmap:
+            self.mpl_kwargs['cmap'] = cmap
 
     @property
     def box(self):
@@ -127,7 +132,7 @@ class Explorer(object):
 
     """
     def __init__(self):
-        self.file_picker = FilePicker()
+        self.file_pickers = [FilePicker()]
         # Load action.
         self._load_button = ipywidgets.Button(description="Load these Files!")
         self._load_button.on_click(self._handle_load)
@@ -147,22 +152,21 @@ class Explorer(object):
     def layout(self):
         self._plot_container = ipywidgets.Box()
         # Define a container for the main controls in the browse interface.
-        self._file_pickers = ipywidgets.Box(children=[self.file_picker.box,
+        ftabs = ipywidgets.Tab(children=[fp.box for fp in self.file_pickers])
+        self._file_picker_tabs = ipywidgets.Box(children=[ftabs,
                                                       self._load_button])
 
         pcc_children = [pc.box for pc in self.plot_controls]
         self._plot_control_container = ipywidgets.Tab(children=pcc_children)
 
-        # for i, (pcc, l) in enumerate(zip(pcc_children, ['a', 'b'])):
-        #     self._plot_control_container.set_title(i, '{}_plot'.format(l))
-        acc_children = [self._file_pickers, self._subplots,
+        acc_children = [self._file_picker_tabs, self._subplots,
                         self._plot_control_container]
-        self._accord = ipywidgets.Accordion(children=acc_children)#, width="100%")
+        self._accord = ipywidgets.Accordion(children=acc_children)
         self._accord.set_title(0, 'Files')
         self._accord.set_title(1, 'SubPlots')
         self._accord.set_title(2, 'Plots')
 
-        self._cubes = []
+        self._cubes = TraitList()
 
         # Display the browse interface.
         IPython.display.display(self._accord)
@@ -188,21 +192,16 @@ class Explorer(object):
         
     def update_cubes_list(self):
         """Update the list of cubes available in the Explorer."""
-        options = [(str(i) + cube.summary(shorten=True), cube) for i, cube in enumerate(self._cubes)]
+        options = [('{}: {}'.format(i, cube.summary(shorten=True)), cube) for i, cube in enumerate(self._cubes)]
         for pc in self.plot_controls:
             pc.cube_picker.value = None
             pc.cube_picker.options = dict([('None', None)] + options)
-        # try:
-        #     self._a_plot_cube_picker.value = options[0][1]
-        #     self._a_plot_cube_picker.options = dict(options)
-        # except TraitError:
-        #     pass
-        
 
     def _handle_load(self, sender):
         """Load button action."""
-        #self._a_plot_cube_picker.options['None'] = None
-        self._cubes = iris.load(self.file_picker.files)
+        fpfs = [fp.files for fp in self.file_pickers]
+        selected_files = reduce(list.__add__, (list(files) for files in fpfs))
+        self._cubes = iris.load(selected_files)
         self.update_cubes_list()
 
 
@@ -218,7 +217,7 @@ class Explorer(object):
         for spl, pc in enumerate(self.plot_controls):
             spl+=1
             cube = pc.cube_picker.value
-            if cube:
+            if cube and spl <= self._subplots.value:
                 x_name = pc.x_coord.value
                 y_name = pc.y_coord.value
                 if (cube.coord(axis='X').name() == x_name and
