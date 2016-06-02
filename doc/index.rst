@@ -4,9 +4,28 @@
 Introduction
 ____________
 
-Description of different methods of using Cube Browser, like a Browser (or Explorer) and a self-constructed notebook.
+Cube Browser is a Python package which can make it quicker and easier to plot and explore your Iris cubes.
+It makes use of IPython widgets for several aspects of plotting, including the use of sliders to browse through slices of data in your plot.
 
-Lots more information here, obviously.
+There are three different ways which you can use Cube Browser:
+
+1. Explorers:
+
+If you have several cubes which you would like to plot and explore in different ways, have a look at our `Explorers<explorers/intro.html>`_, which offer you a ready-made cube-to-plot selection process.
+These are available to download or to run straight from your internet browser.
+
+2. Browsing cubes:
+
+You may want to use the Cube Browser API to write a short python code which will make your plots, instead of using the Explorer.
+This will give you more flexibility in the way you would like to plot your data and how you would like it laid out and customized.
+To do this, you can use the `guide<browsing_cubes/info.html>`_ and `reference<ref_docs.html>`_ pages.
+
+3. Writing your own cube browser:
+
+In the same way that we have constructed our Explorers, you can make use of Ipywidgets to string together your own cube plotting process.
+We have laid out a set of instructions to take you step-by-step through `writing a cube browser<write_your_own/intro.html>`_,
+so you can make a work flow as general or as specialized as you need.
+This could be useful if you have a specific combination of plots which you use frequently and repeatedly.
 
 Installation
 ____________
