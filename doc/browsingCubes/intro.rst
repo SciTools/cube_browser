@@ -11,9 +11,45 @@ Additionally, if you know what plots you would like and how you would like them 
 Making Your Plots
 -----------------
 
-Instructions here about how to load data, plot cubes, what customizations you can make, etc.
+**Prepare your cube**
 
+Before you make your plot, you first have to choose and load the cubes you would like to visualize.  This is no different to the way you would do this in your normal work flow.
+If you need to perform any specific operations on the cube, such as aggregating, collapsing or cube maths, this should also be done before your plot.
 
+**Configure axes**
+
+Cube Browser uses matplotlib functionality, so you must set up your axes in the layout that you desire for your plots.
+The steps that are required here are that you define your projection
+(you can use the Iris convenience function `iplt.default_projection <http://scitools.org.uk/iris/docs/latest/iris/iris/plot.html#iris.plot.default_projection>`_ if this is appropriate),
+and that you define the number of axes and subplots that you need for your layout.  Here is an example:
+
+```python
+projection = iplt.default_projection(air_potential_temperature)
+```
+
+```python
+ax1 = plt.subplot(111, projection=projection)
+```
+
+**Define plots**
+
+The plot types that you can choose from are: `Contourf <wherever/this/lives.html>`_, `Contour <wherever/this/lives.html>`_ and `Pcolormesh <wherever/this/lives.html>`_.
+These plot types mirror those in matplotlib, as do the keyword arguments that you can pass in here.
+Please see the `matplotlib documentation <http://matplotlib.org/api/pyplot_api.html?highlight=contour#matplotlib.pyplot.contour>`_ for options.
+
+You can define your plot using the following syntax (more examples are available in the links below):
+
+```python
+plot = Contour(cube, ax1)
+```
+
+**Display**
+
+Finally, you need to make the call to the Browser class to construct the plots with their sliders and arrange them in your chosen layout.  Here is how you can do this:
+
+```python
+Browser([plot1]).display()
+```
 
 Links to Notebooks
 ------------------
