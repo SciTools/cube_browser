@@ -10,6 +10,17 @@ NAME = 'cube_browser'
 DIR = os.path.abspath(os.path.dirname(__file__))
 
 
+def extract_packages():
+    packages = []
+    root = os.path.join(DIR, 'lib', NAME)
+    offset = len(os.path.dirname(root)) + 1
+    for dpath, dnames, fnames in os.walk(root):
+        if os.path.exists(os.path.join(dpath, '__init__.py')):
+            package = dpath[offset:].replace(os.path.sep, '.')
+            packages.append(package)
+    return packages
+
+
 def extract_version():
     version = None
     fname = os.path.join(DIR, 'lib', NAME, '__init__.py')
@@ -39,16 +50,16 @@ setup_args = dict(
     description      = 'Cube Browser.',
     long_description = extract_description(),
     platforms        = ['Linux', 'Mac OS X', 'Windows'],
-    license          = 'BSD',
+    license          = 'BSD 3-clause',
     url              = 'https://github.com/SciTools/cube_browser',
     package_dir      = {'': 'lib'},
-    packages         = [NAME],
+    packages         = extract_packages(),
     classifiers      = [
         'License :: OSI Approved :: BSD License',
         'Development Status :: 1 - Planning Development Status',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Operating System :: OS Independent',
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',
