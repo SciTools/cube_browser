@@ -5,7 +5,7 @@ import ipywidgets
 import iris
 import matplotlib.pyplot as plt
 import os
-from traits.api import TraitList
+import traitlets
 
 import cube_browser
 
@@ -25,9 +25,10 @@ class FilePicker(object):
         # Observe the path.
         self._path.observe(self._handle_path, names='value')
         # Use default path value to initialise file options.
-        # self._file_options = ['None'] + glob.glob('{}/*'.format(self._path.value))
-        self._file_options = glob.glob('{}/*'.format(self._path.value))
-        self._file_options.sort()
+        self._file_options = []
+        if os.path.exists(self._path.value):
+            self._file_options = glob.glob('{}/*'.format(self._path.value))
+            self._file_options.sort()
         # Defines the files selected to be loaded.
         self._files = ipywidgets.SelectMultiple(
             description='Files:',
@@ -45,10 +46,14 @@ class FilePicker(object):
 
     def _handle_path(self, sender):
         """Path box action."""
-        options = glob.glob('{}/*'.format(self._path.value))
-        options.sort()
-        self._files.value = ()
-        self._files.options = options
+        if os.path.exists(self._path.value):
+            options = glob.glob('{}/*'.format(self._path.value))
+            options.sort()
+            self._files.value = ()
+            self._files.options = OrderedDict([(os.path.basename(f), f)
+                                               for f in self._file_options])
+        else:
+            self._files.options = OrderedDict()
 
     @property
     def box(self):
@@ -127,7 +132,7 @@ class PlotControl(object):
         """The IPywidgets box to display."""
         return self._box
 
-class Explorer(object):
+class Explorer(traitlets.HasTraits):
     """
     IPyWidgets and workflow for exploring collections of cubes.
 
@@ -150,6 +155,8 @@ class Explorer(object):
         self._plot_button = ipywidgets.Button(description="Plot my cube")
         # Create a Box to manage the plot.
         self._plot_button.on_click(self._goplot)
+        self._cubes = traitlets.List()
+
         self.layout()
 
     def layout(self):
@@ -169,8 +176,6 @@ class Explorer(object):
         self._accord.set_title(0, 'Files')
         self._accord.set_title(1, 'SubPlots')
         self._accord.set_title(2, 'Plots')
-
-        self._cubes = TraitList()
 
         # Display the browse interface.
         IPython.display.display(self._accord)
@@ -193,7 +198,7 @@ class Explorer(object):
         """The list of cubes the explorer is currently working with."""
         return self._cubes
 
-        
+    @traitlets.observe('self._cubes')
     def update_cubes_list(self):
         """Update the list of cubes available in the Explorer."""
         options = [('{}: {}'.format(i, cube.summary(shorten=True)), cube) for i, cube in enumerate(self._cubes)]

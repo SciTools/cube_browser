@@ -15,7 +15,7 @@ import iris.plot as iplt
 import matplotlib.pyplot as plt
 
 # Cube-browser version.
-__version__ = '0.1.0-dev'
+__version__ = '0.2.0-dev'
 
 
 # Set default IPython magics if an IPython session has invoked the import.
