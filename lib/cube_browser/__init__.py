@@ -7,20 +7,22 @@ import warnings
 from weakref import WeakValueDictionary
 
 import IPython
+from IPython.display import set_matplotlib_formats
+
 import ipywidgets
 from iris.coords import Coord, DimCoord
 import iris.plot as iplt
 import matplotlib.pyplot as plt
 
 # Cube-browser version.
-__version__ = '0.1.0-dev'
+__version__ = '0.2.0-dev'
 
 
 # Set default IPython magics if an IPython session has invoked the import.
 ipynb = IPython.get_ipython()
 
 if ipynb is not None:  # pragma: no cover
-    ipynb.magic(u"%matplotlib notebook")
+    ipynb.magic(u"%matplotlib nbagg")
     ipynb.magic(u"%autosave 0")
 
 
@@ -405,6 +407,9 @@ class Plot2D(object):
         emsg = '{!r} requires a draw method for rendering.'
         raise NotImplementedError(emsg.format(type(self).__name__))
 
+    def legend(self, mappable, axes):
+        # http://stackoverflow.com/questions/30030328/correct-placement-of-colorbar-relative-to-geo-axes-cartopy/30077745#30077745
+        pass
 
 class Contourf(Plot2D):
     """
@@ -420,6 +425,8 @@ class Contourf(Plot2D):
     def draw(self, cube):
         self.element = iplt.contourf(cube, axes=self.axes, coords=self.coords,
                                      **self.kwargs)
+        if 'levels' not in self.kwargs:
+            self.kwargs['levels'] = self.element.levels
         return self.element
 
     # XXX: Not sure this should live here!
@@ -428,6 +435,9 @@ class Contourf(Plot2D):
         if self.element is not None:
             for collection in self.element.collections:
                 collection.remove()
+
+    def legend(self, mappable, axes):
+        plt.colorbar(mappable, ax=axes, orientation='horizontal')
 
 
 class Contour(Plot2D):
@@ -444,12 +454,21 @@ class Contour(Plot2D):
     def draw(self, cube):
         self.element = iplt.contour(cube, axes=self.axes, coords=self.coords,
                                     **self.kwargs)
+        if 'levels' not in self.kwargs:
+            self.kwargs['levels'] = self.element.levels
         return self.element
 
     def clear(self):
         if self.element is not None:
             for collection in self.element.collections:
                 collection.remove()
+    def legend(self, mappable, axes):
+        plt.colorbar(mappable, ax=axes, orientation='horizontal')
+        # labels = self.kwargs['levels']
+        # for c, l in zip(mappable.collections, labels):
+        #     c.set_label(l)
+        # axes.legend(bbox_to_anchor=(-.2, -.1))
+        # axes.legend(loc='lower left')
 
 
 class Pcolormesh(Plot2D):
@@ -472,11 +491,16 @@ class Pcolormesh(Plot2D):
 
         self.element = iplt.pcolormesh(cube, axes=self.axes,
                                        coords=self.coords, **self.kwargs)
+        if 'clim' not in self.kwargs:
+            self.kwargs['clim'] = self.element.get_clim()
         return self.element
 
     def clear(self):
         if self.element is not None:
             self.element.remove()
+
+    def legend(self, mappable, axes):
+        plt.colorbar(mappable, ax=axes, orientation='horizontal')
 
 
 class Browser(object):
@@ -539,6 +563,7 @@ class Browser(object):
     def display(self):
         # XXX: Ideally, we might want to register an IPython display hook.
         self.on_change(None)
+        
         IPython.display.display(self.form)
 
     def _build_mappings(self):
@@ -600,7 +625,7 @@ class Browser(object):
         all appropriate plots given a slider state change.
 
         """
-        def _update(plots, force=False):
+        def _update(plots, force=False, legend=False):
             for plot in plots:
                 plot.clear()
             for plot in plots:
@@ -612,12 +637,15 @@ class Browser(object):
                 if names is not None:
                     kwargs = {name: slider_by_name[name].value
                               for name in names}
-                    plot(**kwargs)
+                    # plot(**kwargs)
+                    mappable = plot(**kwargs)
+                    if legend:
+                        plot.legend(mappable, plot.axes)
 
         slider_by_name = self._slider_by_name
         if change is None:
             # Initial render of all the plots.
-            _update(self.plots, force=True)
+            _update(self.plots, force=True, legend=True)
         else:
             # A widget slider state has changed, so only refresh
             # the appropriate plots.
