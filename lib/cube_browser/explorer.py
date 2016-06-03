@@ -52,7 +52,7 @@ class FilePicker(object):
 
     @property
     def box(self):
-        """The box to display"""
+        """The IPywidgets box to display."""
         return self._box
 
 
@@ -124,7 +124,7 @@ class PlotControl(object):
 
     @property
     def box(self):
-        """"""
+        """The IPywidgets box to display."""
         return self._box
 
 class Explorer(object):

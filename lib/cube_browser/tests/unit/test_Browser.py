@@ -294,6 +294,7 @@ class Test_on_change(tests.IrisTest):
         mockers = [mock.Mock(value=self.value) for i in range(20)]
         self.patch('ipywidgets.SelectionSlider', side_effect=mockers)
         self.patch('ipywidgets.VBox')
+        self.patch('matplotlib.pyplot.colorbar')
 
     def test(self):
         plot = Contour(self.cube, self.axes)
