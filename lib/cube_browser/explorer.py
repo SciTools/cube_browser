@@ -137,6 +137,7 @@ class Explorer(traitlets.HasTraits):
     IPyWidgets and workflow for exploring collections of cubes.
 
     """
+    _cubes = traitlets.List()
     def __init__(self):
         self.file_pickers = [FilePicker()]
         # Load action.
@@ -155,8 +156,7 @@ class Explorer(traitlets.HasTraits):
         self._plot_button = ipywidgets.Button(description="Plot my cube")
         # Create a Box to manage the plot.
         self._plot_button.on_click(self._goplot)
-        self._cubes = traitlets.List()
-
+        self._cubes = []
         self.layout()
 
     def layout(self):
@@ -197,11 +197,20 @@ class Explorer(traitlets.HasTraits):
     def cubes(self):
         """The list of cubes the explorer is currently working with."""
         return self._cubes
+    @cubes.setter
+    def cubes(self, new_cubes):
+        """To update the list of cubes the explorer is working with."""
+        self._cubes = new_cubes
 
-    @traitlets.observe('self._cubes')
-    def update_cubes_list(self):
-        """Update the list of cubes available in the Explorer."""
-        options = [('{}: {}'.format(i, cube.summary(shorten=True)), cube) for i, cube in enumerate(self._cubes)]
+    @traitlets.observe('_cubes')
+    def update_cubes_list(self, change=None):
+        """
+        Update the list of cubes available in the Explorer.
+        Assigning an updated list into `cubes` automatically runs this.
+
+        """
+        options = [('{}: {}'.format(i, cube.summary(shorten=True)), cube)
+                   for i, cube in enumerate(self._cubes)]
         for pc in self.plot_controls:
             pc.cube_picker.value = None
             pc.cube_picker.options = dict([('None', None)] + options)
