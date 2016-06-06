@@ -21,35 +21,30 @@ If you need to perform any specific operations on the cube, such as aggregating,
 Cube Browser uses matplotlib functionality, so you must set up your axes in the layout that you desire for your plots.
 The steps that are required here are that you define your projection
 (you can use the Iris convenience function `iplt.default_projection <http://scitools.org.uk/iris/docs/latest/iris/iris/plot.html#iris.plot.default_projection>`_ if this is appropriate),
-and that you define the number of axes and subplots that you need for your layout.  Here is an example:
+and that you define the number of axes and subplots that you need for your layout.  Here is an example:::
 
-```python
-projection = iplt.default_projection(air_potential_temperature)
-```
-
-```python
-ax1 = plt.subplot(111, projection=projection)
-```
+    projection = iplt.default_projection(air_potential_temperature)
+    ax1 = plt.subplot(111, projection=projection)
 
 **Define plots**
 
-The plot types that you can choose from are: `Contourf <wherever/this/lives.html>`_, `Contour <wherever/this/lives.html>`_ and `Pcolormesh <wherever/this/lives.html>`_.
+The plot types that you can choose from are: Contourf, Contour and Pcolormesh, the source code for which can be found `here <../../../../lib/cube_browser/__init__.py>`_.
 These plot types mirror those in matplotlib, as do the keyword arguments that you can pass in here.
-Please see the `matplotlib documentation <http://matplotlib.org/api/pyplot_api.html?highlight=contour#matplotlib.pyplot.contour>`_ for options.
+Please see the `matplotlib documentation <http://matplotlib.org/api/pyplot_api.html?highlight=contour#matplotlib.pyplot.contour>`_ for a full docstring and list of keyword arguments.
 
-You can define your plot using the following syntax (more examples are available in the links below):
+You can define your plot using the following syntax (more examples are available in the links below):::
 
-```python
-plot = Contour(cube, ax1)
-```
+    plot = Contour(cube, ax1)
 
 **Display**
 
-Finally, you need to make the call to the Browser class to construct the plots with their sliders and arrange them in your chosen layout.  Here is how you can do this:
+Finally, you need to make the call to the Browser class to construct the plots with their sliders and arrange them in your chosen layout.  Here is how you can do this:::
 
-```python
-Browser([plot1]).display()
-```
+    Browser([plot]).display()
+
+The example described above shows how to plot a single cube on a single set of axes, but you can also use Cube Browser to make combinations of plots, for example side-by-side plots or overlays.
+The links below is an example of how you can achieve this.
+
 
 Links to Notebooks
 ------------------
