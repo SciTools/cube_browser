@@ -58,6 +58,7 @@ bug reports and feature requests on our
    browsing_cubes/intro
    ref_docs
    write_your_own/intro
+   help
 
 
    Github source <https://github.com/SciTools/cube_browser>
