@@ -3,16 +3,17 @@ Explorers
 
 An Explorer is a Jupyter notebook containing IPython widgets which allow the user to select a set of options in order to plot an Iris cube.
 
-For our first release of Cube Browser we have constructed one such work flow, which you can access via the links below to either run directly from this web browser or download and run from your desktop.
+For our first release of Cube Browser we have constructed one such workflow, which you can access via the links below.
+You can either run the Explorer directly from this web browser to see and interact with example data, or download and run from your desktop to use with your own data.
 This Explorer allows the user to choose and load one or more cube(s) from the desired data path, then choose the plot type and the coordinates for the X and Y axis, and make either one or two plots.
-The default data path is the GloSea4 ensemble data in the Iris sample data directory, but you can change this to the location of your own data to find the files you need.
+The example data path is the GloSea4 ensemble data in the Iris sample data directory, but if you download the Explorer you can change this to the location of your own data to find the files you need.
 
 Links to Cube Explorers
 -----------------------
 
-Explorer.link (open notebook)
+`Click here to open the example notebook <https://gist.github.com/corinnebosley/816942405bacd868660baefc9c85d13c>`_
 
-Explorer.link (download)
+:download:`Click here to download the notebook <explore.ipynb>`
 
 Usage
 -----
@@ -22,7 +23,7 @@ When your kernel is ready, run the first cell to open your set of widgets.  Thes
 When you have selected and loaded your cube and then made your plotting selections, press the 'Plot my Cube' button to produce your plot(s).
 
 To download the notebook, you will need an environment which possesses the requirements to run it.
-The installation instructions on the `homepage<index.html>`_ will provide this capability.
+The installation instructions on the `homepage <../index.html>`_ will provide this capability.
 Make sure you have a terminal with the Cube Browser environment activated, change directory to the location of your downloaded notebook, and then type:
 
 ``jupyter notebook``
