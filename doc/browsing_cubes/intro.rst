@@ -46,9 +46,7 @@ The example described above shows how to plot a single cube on a single set of a
 The links below is an example of how you can achieve this.
 
 
-Links to Notebooks
-------------------
+Example Notebooks
+-----------------
 
-four_axes.link
-
-more examples?
+`four-axes example <https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/corinnebosley/2fbc9fcb329a2459d926c82eb94386b4/raw/785b92e590788d87425bac63ac4b13efbe14f1e1/four_axes.ipynb>`_
