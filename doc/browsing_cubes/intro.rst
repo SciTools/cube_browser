@@ -49,4 +49,4 @@ The links below is an example of how you can achieve this.
 Example Notebooks
 -----------------
 
-`four-axes example <https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/corinnebosley/2fbc9fcb329a2459d926c82eb94386b4/raw/785b92e590788d87425bac63ac4b13efbe14f1e1/four_axes.ipynb>`_
+`four-axes example <https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/corinnebosley/2fbc9fcb329a2459d926c82eb94386b4/raw/92cfe3b056532e0a469319388495ce4bc212a926/four_axes.ipynb>`_
