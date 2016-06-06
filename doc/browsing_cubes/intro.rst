@@ -43,10 +43,12 @@ Finally, you need to make the call to the Browser class to construct the plots w
     Browser([plot]).display()
 
 The example described above shows how to plot a single cube on a single set of axes, but you can also use Cube Browser to make combinations of plots, for example side-by-side plots or overlays.
-The links below is an example of how you can achieve this.
+The links below are examples of how you can achieve these.
 
 
 Example Notebooks
 -----------------
 
 `four-axes example <https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/corinnebosley/2fbc9fcb329a2459d926c82eb94386b4/raw/92cfe3b056532e0a469319388495ce4bc212a926/four_axes.ipynb>`_
+
+`overlay example <https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/corinnebosley/7376f8919958027123f2f8ebdb508df3/raw/be561d438842d810fefcf0a90555e4acb8e9dd3c/overlay.ipynb>`_
