@@ -29,7 +29,7 @@ and that you define the number of axes and subplots that you need for your layou
 
 **Define plots**
 
-The plot types that you can choose from are: Contourf, Contour and Pcolormesh.  These plot types mirror those in matplotlib, as do the keyword arguments that you can pass in here.  
+The plot types that you can choose from are: Contourf, Contour and Pcolormesh.  These plot types mirror those in matplotlib, as do the keyword arguments that you can pass in here.
 Please see the `matplotlib documentation <http://matplotlib.org/api/pyplot_api.html?highlight=contour#matplotlib.pyplot.contour>`_ for a full docstring and list of keyword arguments.
 
 You can define your plot using the following syntax (more examples are available in the links below):::
