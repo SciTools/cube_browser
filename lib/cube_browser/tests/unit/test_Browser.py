@@ -31,6 +31,8 @@ class Test__build_mappings__cache(tests.IrisTest):
         self.patch('IPython.display.display')
         self.patch('ipywidgets.SelectionSlider')
         self.patch('ipywidgets.VBox')
+        self.patch('ipywidgets.HBox')
+        self.patch('ipywidgets.Label')
         self.patch('cube_browser.Browser.on_change')
 
     def test_shared_cache(self):
@@ -65,6 +67,8 @@ class Test__build_mappings(tests.IrisTest):
         self.patch('IPython.display.display')
         self.patch('ipywidgets.SelectionSlider')
         self.patch('ipywidgets.VBox')
+        self.patch('ipywidgets.HBox')
+        self.patch('ipywidgets.Label')
         self.patch('cube_browser.Browser.on_change')
 
     def _tidy(self, coord):
@@ -294,6 +298,8 @@ class Test_on_change(tests.IrisTest):
         mockers = [mock.Mock(value=self.value) for i in range(20)]
         self.patch('ipywidgets.SelectionSlider', side_effect=mockers)
         self.patch('ipywidgets.VBox')
+        self.patch('ipywidgets.HBox')
+        self.patch('ipywidgets.Label')
         self.patch('matplotlib.pyplot.colorbar')
 
     def test(self):
