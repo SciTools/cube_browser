@@ -16,11 +16,16 @@ class FilePicker(object):
     """
     File picker widgets.
     """
-    def __init__(self):
+    def __init__(self, initial_value=''):
+        if initial_value == '':
+            try:
+                initial_value = iris.sample_data_path('GloSea4')
+            except ValueError:
+                initial_value = ''
         # Define the file system path for input files.
         self._path = ipywidgets.Text(
             description='Path:',
-            value=iris.sample_data_path('GloSea4'),
+            value=initial_value,
             width="100%")
         # Observe the path.
         self._path.observe(self._handle_path, names='value')
