@@ -5,7 +5,7 @@ Cube Browser notebooks make use of a number of Python packages and projects.
 In most cases, you will be able to find help and information from the relevant website.
 Links to the websites of these projects are listed below:
 
--  `Anaconda <https://anaconda.org/>`_
+-  `Anaconda <https://www.continuum.io/documentation>`_
 -  `Cartopy <http://scitools.org.uk/cartopy/docs/latest/index.html>`_
 -  `IPython <http://scipy-ipython.readthedocs.io/en/latest/>`_
 -  `Ipywidgets <http://ipywidgets.readthedocs.io/en/latest/>`_
