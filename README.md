@@ -5,6 +5,8 @@ Cube Browser
 
 [![Throughput Graph](https://graphs.waffle.io/SciTools/cube_browser/throughput.svg)](https://waffle.io/SciTools/cube_browser/metrics/throughput) 
 
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/corinnebosley/cube_browser)
+
 Working with Jupyter Notebooks to interactively visualise Iris cubes.
 
 To read the docs locally, run with an http server, e.g:

@@ -1,12 +1,13 @@
 Browsing Cubes
 ==============
 
-The Cube Browser package offers a user interface which allows you to visualize your Iris cubes in a Jupyter notebook.
-It utilizes Python and the Matplotlib, Iris and Cartopy libraries while offering the additional functionality of plotting an entire cube without having to slice it.
+The Cube Browser package offers a user interface which allows you to visualize your `Iris cubes <http://scitools.org.uk/iris/docs/latest/userguide/iris_cubes.html>`_ in a Jupyter notebook.
+Cube Browser utilizes Python and the Matplotlib, Iris and Cartopy libraries while offering the additional functionality of plotting an entire cube without having to slice it.
 
 You can make use of the Cube Browser library to write a short notebook to display your Iris cube data.
-There are several advantages of using this approach, but the main advantage is flexibility in the options you can apply to each plot.
+There are several advantages of using this approach, most notably the flexibility in the options you can apply to each plot and the relative ease with which you can achieve this.
 Additionally, if you know what plots you would like and how you would like them laid out, this is a very quick way of producing your plots and exploring your cube data.
+You can also apply the same notebook to many different data sets at different times or with different customizations.
 
 Making Your Plots
 -----------------
@@ -19,7 +20,7 @@ If you need to perform any specific operations on the cube, such as aggregating,
 **Configure axes**
 
 Cube Browser uses matplotlib functionality, so you must set up your axes in the layout that you desire for your plots.
-The steps that are required here are that you define your projection
+The steps that are required here are that you define your map projection
 (you can use the Iris convenience function `iplt.default_projection <http://scitools.org.uk/iris/docs/latest/iris/iris/plot.html#iris.plot.default_projection>`_ if this is appropriate),
 and that you define the number of axes and subplots that you need for your layout.  Here is an example:::
 
@@ -28,8 +29,7 @@ and that you define the number of axes and subplots that you need for your layou
 
 **Define plots**
 
-The plot types that you can choose from are: Contourf, Contour and Pcolormesh, the source code for which can be found `here <../../../../lib/cube_browser/__init__.py>`_.
-These plot types mirror those in matplotlib, as do the keyword arguments that you can pass in here.
+The plot types that you can choose from are: Contourf, Contour and Pcolormesh.  These plot types mirror those in matplotlib, as do the keyword arguments that you can pass in here.  
 Please see the `matplotlib documentation <http://matplotlib.org/api/pyplot_api.html?highlight=contour#matplotlib.pyplot.contour>`_ for a full docstring and list of keyword arguments.
 
 You can define your plot using the following syntax (more examples are available in the links below):::
