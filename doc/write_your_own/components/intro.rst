@@ -6,14 +6,17 @@ Construction
 
 **Decide on options and widgets**
 
-To start making your own Cube Explorer, you need to decide which aspects of cube plotting you would like to offer options for and which aspects you would like to hard code.
+To start making your own Cube Explorer, you need to decide which options to offer when plotting your data.
+
 The examples in the notebooks below show some of the options that you might want to offer, and the widgets that you could use to display them.
 The syntax to create each widget is very similar, but some small aspects (like the widget type) differ.  The basic outline looks like this::
 
-    widget1 = ipywidgets.ToggleButtons(
-              description='Dimension:',
-              options=coordinates,
-              value = 'time')
+    x_selector = ipywidgets.ToggleButtons(
+                        description='Dimension:',
+                        options=coordinates,
+                        value = 'time')
+
+In this example, the ``x_selector`` widget could be used to provide the user with the option to select the dimension to plot on the x-axis (by default 'time' would be on the x-axis).
 
 For more detailed guidance and a more complete list of widgets that are available, please visit the `ipywidgets <http://ipywidgets.readthedocs.io/en/latest/examples/Widget%20List.html>`_ website.
 
