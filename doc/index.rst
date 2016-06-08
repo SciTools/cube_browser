@@ -29,7 +29,7 @@ There are three different ways which you can use Cube Browser:
    We have provided some `developer documentation <write_your_own/intro.html>`_ illustrating how to use IPywidgets to build a work flow as general or as specialized as you need.
    This could be useful if you have a specific combination of plots which you use frequently and repeatedly.
 
-   `Click here <../../../lib/cube_browser/explorer.py>`_ to see the source code for the Explorer we have provided.
+   Here is the `source code <https://github.com/SciTools/cube_browser/blob/master/lib/cube_browser/explorer.py>`_ for the Cube Explorer we have provided.
 
 Installation
 ____________
