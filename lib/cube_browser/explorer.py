@@ -1,16 +1,19 @@
 from collections import OrderedDict
 import glob
+import os
+
 import IPython.display
 import ipywidgets
 import iris
 import matplotlib.pyplot as plt
-import os
 import traitlets
 
 import cube_browser
 
+
 # Clear output, such as autosave disable notification.
 IPython.display.clear_output()
+
 
 class FilePicker(object):
     """
@@ -71,11 +74,10 @@ class PlotControl(object):
     def __init__(self):
         self.mpl_kwargs = {}
         # Defines the cube which is to be plotted.
-        self.cube_picker = ipywidgets.Dropdown(
-            description = 'Cubes:',
-            options = {'None': None},
-            value = None,
-            width = '50%')
+        self.cube_picker = ipywidgets.Dropdown(description='Cubes:',
+                                               options={'None': None},
+                                               value=None,
+                                               width='50%')
 
         # Define the type of cube browser plot required
         self.plot_type = ipywidgets.Dropdown(
@@ -96,24 +98,26 @@ class PlotControl(object):
 
         # Handle events:
         self.cube_picker.observe(self._handle_cube_selection,
-                                         names='value')
+                                 names='value')
         self.cmap.observe(self._handle_cmap, names='value')
         self.plot_type.observe(self._handle_plot_type, names='value')
-        
+
         self._box = ipywidgets.Box(children=[self.cube_picker,
-                                   self.plot_type,
-                                   self.x_coord,
-                                   self.y_coord,
-                                   self.cmap])
+                                             self.plot_type,
+                                             self.x_coord,
+                                             self.y_coord,
+                                             self.cmap])
 
     def _handle_cube_selection(self, sender):
         """Cube selector action."""
         if self.cube_picker.value is not None:
-            self.x_coord.options = ['None'] + [coord.name() for coord in
-                               self.cube_picker.value.coords(dim_coords=True)]
+            options = [coord.name() for coord in
+                       self.cube_picker.value.coords(dim_coords=True)]
+            self.x_coord.options = ['None'] + options
             self.x_coord.value = self.cube_picker.value.coord(axis='X').name()
-            self.y_coord.options = ['None'] + [coord.name() for coord in
-                               self.cube_picker.value.coords(dim_coords=True)]
+            options = [coord.name() for coord in
+                       self.cube_picker.value.coords(dim_coords=True)]
+            self.y_coord.options = ['None'] + options
             self.y_coord.value = self.cube_picker.value.coord(axis='Y').name()
 
     def _handle_cmap(self, sender):
@@ -137,12 +141,14 @@ class PlotControl(object):
         """The IPywidgets box to display."""
         return self._box
 
+
 class Explorer(traitlets.HasTraits):
     """
     IPyWidgets and workflow for exploring collections of cubes.
 
     """
     _cubes = traitlets.List()
+
     def __init__(self):
         self.file_pickers = [FilePicker()]
         # Load action.
@@ -151,9 +157,8 @@ class Explorer(traitlets.HasTraits):
         self._file_tab_button = ipywidgets.Button(description="add tab")
         self._file_tab_button.on_click(self._handle_new_tab)
 
-        self._subplots = ipywidgets.RadioButtons(
-            description = 'subplots',
-            options = [1, 2])
+        self._subplots = ipywidgets.RadioButtons(description='subplots',
+                                                 options=[1, 2])
 
         self.plot_controls = [PlotControl(), PlotControl()]
 
@@ -167,10 +172,12 @@ class Explorer(traitlets.HasTraits):
     def layout(self):
         self._plot_container = ipywidgets.Box()
         # Define a container for the main controls in the browse interface.
-        self.ftabs = ipywidgets.Tab(children=[fp.box for fp in self.file_pickers])
-        self.bbox = ipywidgets.HBox(children=[self._load_button,
-                                         self._file_tab_button])
-        self._file_picker_tabs = ipywidgets.Box(children=[self.ftabs, self.bbox])
+        children = [fp.box for fp in self.file_pickers]
+        self.ftabs = ipywidgets.Tab(children=children)
+        children = [self._load_button, self._file_tab_button]
+        self.bbox = ipywidgets.HBox(children=children)
+        children = [self.ftabs, self.bbox]
+        self._file_picker_tabs = ipywidgets.Box(children=children)
 
         pcc_children = [pc.box for pc in self.plot_controls]
         self._plot_control_container = ipywidgets.Tab(children=pcc_children)
@@ -185,8 +192,6 @@ class Explorer(traitlets.HasTraits):
         # Display the browse interface.
         IPython.display.display(self._accord)
         IPython.display.display(self._plot_button)
-        
-
         IPython.display.display(self._plot_container)
 
     @property
@@ -202,6 +207,7 @@ class Explorer(traitlets.HasTraits):
     def cubes(self):
         """The list of cubes the explorer is currently working with."""
         return self._cubes
+
     @cubes.setter
     def cubes(self, new_cubes):
         """To update the list of cubes the explorer is working with."""
@@ -230,7 +236,8 @@ class Explorer(traitlets.HasTraits):
     def _handle_new_tab(self, sender):
         """Add new file tab."""
         self.file_pickers.append(FilePicker())
-        self.ftabs = ipywidgets.Tab(children=[fp.box for fp in self.file_pickers])
+        children = [fp.box for fp in self.file_pickers]
+        self.ftabs = ipywidgets.Tab(children=children)
         self._file_picker_tabs.children = [self.ftabs, self.bbox]
 
     def _goplot(self, sender):
@@ -240,26 +247,27 @@ class Explorer(traitlets.HasTraits):
         sub_plots = 110
         if self._subplots.value == 2:
             sub_plots = 120
-            
+
         confs = []
         for spl, pc in enumerate(self.plot_controls):
-            spl+=1
+            spl += 1
             cube = pc.cube_picker.value
             if cube and spl <= self._subplots.value:
-                x_name = pc.x_coord.value
-                y_name = pc.y_coord.value
-                if (cube.coord(axis='X').name() == x_name and
-                    cube.coord(axis='Y').name() == y_name):
+                pc_x_name = pc.x_coord.value
+                pc_y_name = pc.y_coord.value
+                x_name = cube.coord(axis='X').name()
+                y_name = cube.coord(axis='Y').name()
+                if x_name == pc_x_name and y_name == pc_y_name:
                     projection = cube.coord_system().as_cartopy_projection()
-                    ax = fig.add_subplot(sub_plots+spl,
+                    ax = fig.add_subplot(sub_plots + spl,
                                          projection=projection)
                     ax.coastlines()
                 else:
                     ax = plt.gca()
                     ax = fig.add_subplot(sub_plots+spl)
                 plot_type = pc.plot_type
-                confs.append(plot_type.value(cube, ax,
-                                             coords=[x_name, y_name],
+                coords = [pc_x_name, pc_y_name]
+                confs.append(plot_type.value(cube, ax, coords=coords,
                                              **pc.mpl_kwargs))
         self.browser = cube_browser.Browser(confs)
         self.browser.on_change(None)
