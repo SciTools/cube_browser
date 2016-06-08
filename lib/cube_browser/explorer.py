@@ -14,6 +14,7 @@ import cube_browser
 # Clear output, such as autosave disable notification.
 IPython.display.clear_output()
 
+
 class FilePicker(object):
     """
     File picker widgets.
