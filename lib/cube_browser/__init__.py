@@ -15,6 +15,7 @@ from iris.coords import Coord, DimCoord
 import iris.plot as iplt
 import matplotlib.pyplot as plt
 
+
 # Cube-browser version.
 __version__ = '1.1.0-dev'
 
@@ -29,6 +30,7 @@ if ipynb is not None:  # pragma: no cover
 # set iris Future switches
 iris.FUTURE.netcdf_promote = True
 iris.FUTURE.strict_grib_load = True
+
 
 class _AxisAlias(namedtuple('_AxisAlias', 'dim, name, size')):
     def __eq__(self, other):
@@ -415,6 +417,7 @@ class Plot2D(object):
         # http://stackoverflow.com/questions/30030328/correct-placement-of-colorbar-relative-to-geo-axes-cartopy/30077745#30077745
         pass
 
+
 class Contourf(Plot2D):
     """
     Constructs a filled contour plot instance of a cube.
@@ -466,6 +469,7 @@ class Contour(Plot2D):
         if self.element is not None:
             for collection in self.element.collections:
                 collection.remove()
+
     def legend(self, mappable, axes):
         plt.colorbar(mappable, ax=axes, orientation='horizontal')
         # labels = self.kwargs['levels']
@@ -576,7 +580,6 @@ class Browser(object):
     def display(self):
         # XXX: Ideally, we might want to register an IPython display hook.
         self.on_change(None)
-        
         IPython.display.display(self.form)
 
     def _build_mappings(self):
