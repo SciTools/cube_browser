@@ -36,14 +36,14 @@ Follow the links below to view some examples of widgets which could be used as c
 
 **Construct one widget per cell**
 
-Once you have decided what options and widgets you would like to present you can treat them as your individual components, each one contained in a single Jupyter notebook cell.
+Once you have decided what options and widgets you would like to present you can treat them as your individual components by containing each one in a single Jupyter notebook cell.
 Each component can be displayed using this line at the bottom of the cell::
 
     IPython.display.display()
 
 **Make plotting button**
 
-At the end of your notebook you will need to add a cell which creates your plots using the values selected in the options widgets.  This will incorporate the Cube Browser call, like so::
+Finally, at the end of your notebook you will need a cell that creates your plots using the values selected in the options widgets.  This will incorporate the Cube Browser call, like so::
 
     Browser([plot_name]).display()
 
@@ -55,10 +55,10 @@ It is convenient to make a button to achieve this (see button example below) as 
 Usage
 -----
 
-To use your Explorer, you must run each cell consecutively to produce your widgets and log your selections.
-Upon running each cell, you must make the selection for the widget relating to that cell before running the next.
+To use your Cube Explorer, you must run each cell consecutively to produce your widgets and store your selected values.
+Hence, as you run each cell, you set your value for the widget before running the next.
 
-If you would like to change any of your options retrospectively, you will have to re-run all following widgets after the change to ensure that the values update.
+If you would like to change any of your selections retrospectively, you will have to re-run all following cells to ensure that the values update.
 This is important if you have any dependencies between widgets (see following notebook links for examples of this).
 
 
@@ -70,9 +70,10 @@ This is important if you have any dependencies between widgets (see following no
 Linking up your Widgets
 -----------------------
 
-If you have more than one selection widget in any Explorer notebook, the process of re-running cells after every selection soon becomes cumbersome and confusing.
+If you have more than one selection widget in any Cube Explorer notebook, the process of re-running cells after every selection soon becomes cumbersome and confusing.
+This can be overcome by connecting the component widgets in order to pass information between them.
 
-Press Next to see the 'Components' page of this tutorial, which demonstrates how you can construct connections between the components in order to pass information between them without the need to re-run.
+Press Next to see the 'Cube Explorer Connections' page of this tutorial, which demonstrates how you can construct these connections.
 
 
 
