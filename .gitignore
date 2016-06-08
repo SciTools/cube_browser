@@ -1,0 +1,10 @@
+*.py[co]
+
+lib/cube_browser.egg-info
+
+# Created by editors
+*~
+\#*
+\.\#*
+*.swp
+*.ipynb_checkpoints*

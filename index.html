@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction &mdash; CubeBrowser</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CubeBrowser" href="#"/>
+        <link rel="next" title="Cube Explorers" href="explorers/intro.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> CubeBrowser
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="explorers/intro.html">Cube Explorers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="browsing_cubes/intro.html">Browsing Cubes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ref_docs.html">Reference Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_your_own/intro.html">Writing Your Own Cube Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help.html">Useful Links</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/SciTools/cube_browser">Github source</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">CubeBrowser</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Cube Browser is a Python package that makes it quicker and easier to plot and explore your Iris cube data.
+The package allows you to view your data in a user-friendly interactive interface that you can customize as you require.</p>
+<p>Cube Browser incorporates Ipython widgets (<a class="reference external" href="http://ipywidgets.readthedocs.io/en/latest/examples/Widget%20Basics.html">ipywidgets</a>) for plotting, including the use of sliders to browse through slices of data in your plot.</p>
+<p>There are three different ways which you can use Cube Browser:</p>
+<ol class="arabic">
+<li><p class="first"><strong>Using Cube Explorer:</strong></p>
+<p>You can use our ready-made Cube Explorers to choose and plot your Iris cubes.
+This is an interactive Graphical User Interface, which is available to <a class="reference download internal" href="_downloads/explore.ipynb" download=""><code class="xref download docutils literal"><span class="pre">download</span></code></a>
+You can see a demonstration version of explorer via the mybinder service.  This is freely hosted by generous people, but it is not fast and you should not load your own data into the sessions; it uses Iris sample data instead: <a class="reference external" href="http://mybinder.org/repo/scitools/cube_browser/doc/explorers/explore.ipynb">mybinder cube_browser</a>.</p>
+</li>
+<li><p class="first"><strong>Browsing cubes:</strong></p>
+<p>If you wish to write a Jupyter notebook to make your bespoke interactive visualisation, you can follow our <a class="reference external" href="browsing_cubes/intro.html">guide</a> and <a class="reference external" href="ref_docs.html">reference</a> pages.
+This will give you more flexibility and control over your plots and layout.</p>
+</li>
+<li><p class="first"><strong>Writing your own Cube Explorer:</strong></p>
+<p>You can construct your own cube plotting explorer in the same way that we have constructed ours.
+We have provided some <a class="reference external" href="write_your_own/intro.html">developer documentation</a> illustrating how to use widgets to achieve this.
+This could be useful if you have a combination of plots you wish to use frequently and repeatedly.</p>
+<p>Here is the <a class="reference external" href="https://github.com/SciTools/cube_browser/blob/master/lib/cube_browser/explorer.py">source code</a> for the Cube Explorer we have provided.</p>
+</li>
+</ol>
+<div class="section" id="notebooks">
+<h2>Notebooks<a class="headerlink" href="#notebooks" title="Permalink to this headline">¶</a></h2>
+<p>All of our Cube Browser capabilities are built for use in Jupyter notebooks.</p>
+<p>To open a notebook, follow the installation instructions below and then change directory to the location of the notebook you wish to view and type <code class="docutils literal"><span class="pre">jupyter</span> <span class="pre">notebook</span></code> in your terminal.</p>
+</div>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>In the following pages you will find downloads of Jupyter notebooks containing Cube Browser operations.
+To be able to use these notebooks, you will need to configure your environment correctly.
+The most efficient and clean method to do this is to use a Conda environment.</p>
+<p>If you have never used Conda before, you will need to follow these <a class="reference external" href="http://conda.pydata.org/docs/install/quick.html">quick installation instructions</a> to get started.</p>
+<p>Once you have done this, open a terminal and type:</p>
+<p><code class="docutils literal"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">scitools</span> <span class="pre">-c</span> <span class="pre">conda-forge</span> <span class="pre">-c</span> <span class="pre">scitools/label/dev</span> <span class="pre">python=2.7</span> <span class="pre">cube_browser</span></code></p>
+<p>This will install Cube Browser with the specific requirements necessary to run it.</p>
+</div>
+<div class="section" id="support">
+<h1>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h1>
+<p>Cube Browser is developed through a collaboration between
+<a class="reference external" href="https://continuum.io">Continuum Analytics</a> and the <a class="reference external" href="http://www.metoffice.gov.uk">UK Met Office</a>.  Cube Browser is open source, available
+under a BSD license freely for both commercial and non-commercial use.  Please file
+bug reports and feature requests on our
+<a class="reference external" href="https://github.com/SciTools/cube_browser/issues">github site</a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="explorers/intro.html" class="btn btn-neutral float-right" title="Cube Explorers" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, CubeBrowser developers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'v1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Browsing Cubes &mdash; CubeBrowser</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CubeBrowser" href="../index.html"/>
+        <link rel="next" title="Reference Documentation" href="../ref_docs.html"/>
+        <link rel="prev" title="Cube Explorers" href="../explorers/intro.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CubeBrowser
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explorers/intro.html">Cube Explorers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Browsing Cubes</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ref_docs.html">Reference Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../write_your_own/intro.html">Writing Your Own Cube Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../help.html">Useful Links</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/SciTools/cube_browser">Github source</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CubeBrowser</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Browsing Cubes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/browsing_cubes/intro.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="browsing-cubes">
+<h1>Browsing Cubes<a class="headerlink" href="#browsing-cubes" title="Permalink to this headline">¶</a></h1>
+<p>The Cube Browser package enables you to visualize your <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/userguide/iris_cubes.html">Iris cubes</a> in a Jupyter notebook.
+Cube Browser utilizes Python and the matplotlib, Iris and cartopy libraries while offering the additional functionality of plotting an entire cube without having to slice it.</p>
+<div class="section" id="example-notebooks">
+<h2>Example Notebooks<a class="headerlink" href="#example-notebooks" title="Permalink to this headline">¶</a></h2>
+<p>The example described below shows how to plot a single cube on a single set of axes, but you can also use Cube Browser to make combinations of plots, for example side-by-side plots or overlays.
+The links below are examples of how you can achieve these.</p>
+<p><a class="reference external" href="http://mybinder.org/repo/scitools/cube_browser/doc/browsing_cubes/four_axes.ipynb">four-axes example</a>.</p>
+<p><a class="reference external" href="http://mybinder.org/repo/scitools/cube_browser/doc/browsing_cubes/overlay.ipynb">overlay example</a></p>
+</div>
+<div class="section" id="writing-a-new-notebook">
+<h2>Writing a new Notebook<a class="headerlink" href="#writing-a-new-notebook" title="Permalink to this headline">¶</a></h2>
+<p>You can make use of the Cube Browser library to write a short notebook to display your Iris cube data.
+There are several advantages of using this approach, notably the flexibility in the options you can apply to each plot and the relative ease with which you can achieve this.
+Additionally, if you know what plots you would like and how you would like them laid out, this is a quick way of producing your plots and exploring your cube data.
+You can also apply the same notebook to many different datasets at different times or with different customizations.</p>
+</div>
+<div class="section" id="making-your-plots">
+<h2>Making Your Plots<a class="headerlink" href="#making-your-plots" title="Permalink to this headline">¶</a></h2>
+<p><strong>Prepare your cube</strong></p>
+<p>First you have to choose and load the Iris cubes that you would like to visualize.
+If you need to perform any data manipulation on the cube, such as aggregating, collapsing or cube maths, this should also be done prior to plotting.</p>
+<p><strong>Configure axes</strong></p>
+<p>Cube Browser uses matplotlib functionality, so you must set up your axes in the layout that you desire for your plots.
+The steps that are required are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Define your map projection (you can use the Iris convenience function <a class="reference external" href="http://scitools.org.uk/iris/docs/latest/iris/iris/plot.html#iris.plot.default_projection">iplt.default_projection</a> if this is appropriate)</li>
+<li>Define the number of axes and subplots that you need for your layout.</li>
+</ul>
+<p>For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">projection</span> <span class="o">=</span> <span class="n">iplt</span><span class="o">.</span><span class="n">default_projection</span><span class="p">(</span><span class="n">air_potential_temperature</span><span class="p">)</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="n">projection</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>Define plots</strong></p>
+<p>The plot types that you can choose from are: Contourf, Contour and Pcolormesh.  These plot types mirror those in matplotlib, as do the keyword arguments that you can pass in here.
+Please see the <a class="reference external" href="http://matplotlib.org/">matplotlib documentation</a> for a full docstring and list of keyword arguments.</p>
+<p>You can define your plot using the following syntax (more examples are available in the links below):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">plot</span> <span class="o">=</span> <span class="n">Contour</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">ax1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Display</strong></p>
+<p>Finally, you need to make the call to the Browser class to construct the plots with their sliders and arrange them in your chosen layout.  Here is how you can do this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Browser</span><span class="p">([</span><span class="n">plot</span><span class="p">])</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../ref_docs.html" class="btn btn-neutral float-right" title="Reference Documentation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../explorers/intro.html" class="btn btn-neutral" title="Cube Explorers" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, CubeBrowser developers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

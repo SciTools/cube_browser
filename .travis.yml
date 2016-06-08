@@ -1,0 +1,72 @@
+language: python
+
+env:
+  - python=2.7
+    iris=1.9
+
+  - python=3.4
+    iris=1.9
+
+  - python=3.5
+    iris=1.9
+
+sudo: false
+
+git:
+  depth: 10000
+
+
+install:
+  # Fetch and install conda
+  # -----------------------
+  - export CONDA_BASE="http://repo.continuum.io/miniconda/Miniconda2"
+  - wget ${CONDA_BASE}-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p ${HOME}/miniconda
+  - export PATH="${HOME}/miniconda/bin:${PATH}"
+
+  # Create the testing environment
+  # ------------------------------
+  - conda config --set always_yes true
+  - conda config --set changeps1 no
+  - conda config --set show_channel_urls true
+  - conda update --quiet conda
+  - ENV_NAME="test-environment"
+  - conda create --quiet -n ${ENV_NAME} python=${TRAVIS_PYTHON_VERSION}
+  - source activate ${ENV_NAME}
+
+  # Customise the testing environment
+  # ---------------------------------
+  - conda config --add channels scitools
+  - conda config --add channels conda-forge
+  - conda install iris=${iris} pip
+  - conda install ipywidgets
+  - pip install coveralls
+
+  # Download iris-test-data
+  # -----------------------
+  - IRIS_TEST_DATA_REF="https://github.com/SciTools/iris-test-data/archive/master.zip"
+  - IRIS_TEST_DATA_DIR="${HOME}/iris-test-data"
+  - mkdir ${IRIS_TEST_DATA_DIR}
+  - wget ${IRIS_TEST_DATA_REF} -O ${IRIS_TEST_DATA_DIR}/iris-test-data.zip
+  - unzip -q ${IRIS_TEST_DATA_DIR}/iris-test-data.zip -d ${IRIS_TEST_DATA_DIR}
+
+  # Configure iris site.cfg
+  # -----------------------
+  - IRIS_DIR=$(python -c "import iris; import os.path; print os.path.dirname(iris.__file__)")
+  - SITE_CFG="${IRIS_DIR}/etc/site.cfg"
+  - echo "[Resources]" > ${SITE_CFG}
+  - echo "test_data_dir = ${IRIS_TEST_DATA_DIR}/iris-test-data-master/test_data" >> ${SITE_CFG}
+  - echo "[System]" >> ${SITE_CFG}
+  - PREFIX="${HOME}/miniconda/envs/${ENV_NAME}"
+  - echo "udunits2_path = ${PREFIX}/lib/libudunits2.so" >> ${SITE_CFG}
+
+  # Summerise environment
+  # ---------------------
+  - conda list
+  - conda info -a
+
+
+script:
+  - coverage run setup.py test
+
+after_success: coveralls
