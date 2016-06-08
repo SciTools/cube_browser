@@ -25,7 +25,7 @@ To download the notebook, you will need an environment which possesses the requi
 The installation instructions on the `homepage<index.html>`_ will provide this capability.
 Make sure you have a terminal with the Cube Browser environment activated, change directory to the location of your downloaded notebook, and then type:
 
-`jupyter notebook`
+``jupyter notebook``
 
 This will open a notebook tree from which you can access your Explorer.
 Once you have opened it, you can follow the steps above for running the notebook from your browser.

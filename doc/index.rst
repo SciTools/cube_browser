@@ -34,9 +34,18 @@ There are three different ways which you can use Cube Browser:
 Installation
 ____________
 
-Conda is great
+In the following pages you will find downloads of Jupyter notebooks containing Cube Browser operations.
+To be able to use these notebooks, you will need to configure your environment correctly.
+The most efficient and clean method to do this is to use a Conda environment.
 
-------------
+If you have never used Conda before, you will need to follow these `quick installation instructions <http://conda.pydata.org/docs/install/quick.html>`_ to get started.
+
+Once you have done this, open a terminal and type:
+
+``conda install -c scitools -c conda-forge -c scitools/label/dev python=2.7 cube_browser``
+
+This will install Cube Browser with the specific requirements necessary to run it.
+
 
 Support
 _______
