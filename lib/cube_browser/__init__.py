@@ -540,7 +540,7 @@ class Browser(object):
         self._slider_by_name = {}
         self._name_by_slider_id = {}
         if self._axis_by_name:
-            name_size = max([len(name) for name in self._axis_by_name])
+            name_len = max([len(name) for name in self._axis_by_name])
         children = []
         for axis in self._axis_by_name.values():
             if hasattr(axis, 'coord') and axis.coord.units.is_time_reference():
@@ -557,7 +557,9 @@ class Browser(object):
             self._name_by_slider_id[id(slider)] = axis.name
             # Explicitly control the slider label in order to avoid
             # fix width widget description label wrapping issues.
-            width = u'{}em'.format(int(name_size * .65))
+            # XXX: Adjust px/em scale-factor dynamically based on font-size.
+            scale_factor = .65
+            width = u'{}em'.format(int(name_len * scale_factor))
             label = ipywidgets.Label(axis.name, padding=u'0.3em', width=width)
             hbox = ipywidgets.HBox(children=[label, slider])
             children.append(hbox)
