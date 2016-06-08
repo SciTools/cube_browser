@@ -4,6 +4,19 @@ Browsing Cubes
 The Cube Browser package enables you to visualize your `Iris cubes <http://scitools.org.uk/iris/docs/latest/userguide/iris_cubes.html>`_ in a Jupyter notebook.
 Cube Browser utilizes Python and the matplotlib, Iris and cartopy libraries while offering the additional functionality of plotting an entire cube without having to slice it.
 
+Example Notebooks
+-----------------
+
+The example described below shows how to plot a single cube on a single set of axes, but you can also use Cube Browser to make combinations of plots, for example side-by-side plots or overlays.
+The links below are examples of how you can achieve these.
+
+`four-axes example <http://mybinder.org/repo/scitools/cube_browser/doc/browsing_cubes/four_axes.ipynb>`_.
+
+`overlay example <http://mybinder.org/repo/scitools/cube_browser/doc/browsing_cubes/overlay.ipynb>`_
+
+Writing a new Notebook
+----------------------
+
 You can make use of the Cube Browser library to write a short notebook to display your Iris cube data.
 There are several advantages of using this approach, notably the flexibility in the options you can apply to each plot and the relative ease with which you can achieve this.
 Additionally, if you know what plots you would like and how you would like them laid out, this is a quick way of producing your plots and exploring your cube data.
@@ -50,12 +63,3 @@ Finally, you need to make the call to the Browser class to construct the plots w
     Browser([plot]).display()
 
 
-Example Notebooks
------------------
-
-The example described above shows how to plot a single cube on a single set of axes, but you can also use Cube Browser to make combinations of plots, for example side-by-side plots or overlays.
-The links below are examples of how you can achieve these.
-
-`four-axes example <https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/corinnebosley/2fbc9fcb329a2459d926c82eb94386b4/raw/92cfe3b056532e0a469319388495ce4bc212a926/four_axes.ipynb>`_
-
-`overlay example <https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/corinnebosley/7376f8919958027123f2f8ebdb508df3/raw/be561d438842d810fefcf0a90555e4acb8e9dd3c/overlay.ipynb>`_
