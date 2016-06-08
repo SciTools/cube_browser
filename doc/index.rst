@@ -33,6 +33,14 @@ There are three different ways which you can use Cube Browser:
    Here is the `source code <https://github.com/SciTools/cube_browser/blob/master/lib/cube_browser/explorer.py>`_ for the Cube Explorer we have provided.
 
 
+Notebooks
+---------
+
+All of our Cube Browser capabilities are built for use in Jupyter notebooks.
+
+To open a notebook, follow the installation instructions below and then change directory to the location of the notebook you wish to view and type ``jupyter notebook`` in your terminal.
+
+
 Installation
 ____________
 
