@@ -539,26 +539,35 @@ class Browser(object):
 
         self._slider_by_name = {}
         self._name_by_slider_id = {}
+        if self._axis_by_name:
+            name_len = max([len(name) for name in self._axis_by_name])
+        children = []
         for axis in self._axis_by_name.values():
             if hasattr(axis, 'coord') and axis.coord.units.is_time_reference():
-                opts = [(axis.coord.units.num2date(axis.coord.points[i]), i)
-                        for i in range(axis.size)]
+                pairs = [(axis.coord.units.num2date(axis.coord.points[i]), i)
+                         for i in range(axis.size)]
             elif hasattr(axis, 'coord'):
-                opts = [(axis.coord.points[i], i) for i in range(axis.size)]
+                pairs = [(axis.coord.points[i], i) for i in range(axis.size)]
             else:
-                opts = [(i, i) for i in range(axis.size)]
-            options = OrderedDict(opts)
-            slider = ipywidgets.SelectionSlider(description=axis.name,
-                                                options=options)
+                pairs = [(i, i) for i in range(axis.size)]
+            options = OrderedDict(pairs)
+            slider = ipywidgets.SelectionSlider(options=options)
             slider.observe(self.on_change, names='value')
             self._slider_by_name[axis.name] = slider
             self._name_by_slider_id[id(slider)] = axis.name
+            # Explicitly control the slider label in order to avoid
+            # fix width widget description label wrapping issues.
+            # XXX: Adjust px/em scale-factor dynamically based on font-size.
+            scale_factor = .65
+            width = u'{}em'.format(int(name_len * scale_factor))
+            label = ipywidgets.Label(axis.name, padding=u'0.3em', width=width)
+            hbox = ipywidgets.HBox(children=[label, slider])
+            children.append(hbox)
 
-        self.form = ipywidgets.VBox()
         # Layout the sliders in a consitent order.
-        slider_names = sorted(self._slider_by_name)
-        sliders = [self._slider_by_name[name] for name in slider_names]
-        self.form.children = sliders
+        self.form = ipywidgets.VBox()
+        key = lambda hbox: hbox.children[0].value
+        self.form.children = sorted(children, key=key)
 
     def display(self):
         # XXX: Ideally, we might want to register an IPython display hook.
