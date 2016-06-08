@@ -4,32 +4,32 @@
 Introduction
 ____________
 
-Cube Browser is a Python package which can make it quicker and easier to plot and explore your Iris cubes.  The package 
-It makes use of IPython widgets for several aspects of plotting, including the use of sliders to browse through slices of data in your plot.
+Cube Browser is a Python package that makes it quicker and easier to plot and explore your Iris cube data.
+The package makes use of IPython widgets (otherwise known as ipywidgets) for several aspects of plotting, including the use of sliders to browse through slices of data in your plot.
 
 There are three different ways which you can use Cube Browser:
 
 
-1. **Explorers:**
+1. **Using Cube Explorer:**
 
-   If you have several cubes which you would like to plot and explore in different ways, have a look at our `Explorers <explorers/intro.html>`_, which offer you a ready-made cube-to-plot selection process.
-   These are available to download or to run straight from your internet browser.
+   You can use our ready-made Cube Explorers to choose and plot your Iris cubes.
+   This is an interactive Graphical User Interface, which is available to :download:`download <explorers/explore.ipynb>`
 
 
 2. **Browsing cubes:**
 
-   You may want to use the Cube Browser API to write a Jupyter notebook to make a simple or complicated interactive visualisation.
-   This will give you more flexibility in the way you would like to plot your data and how you would like it laid out and customized.
-   To do this, you can use the `guide <browsing_cubes/intro.html>`_ and `reference <ref_docs.html>`_ pages.
+   If you wish to write a Jupyter notebook to make your bespoke interactive visualisation, you can follow our `guide <browsing_cubes/intro.html>`_ and `reference <ref_docs.html>`_ pages.
+   This will give you more flexibility and control over your plots and layout.
 
 
-3. **Writing your own cube browser:**
+3. **Writing your own Cube Explorer:**
 
-   In the same way that we have constructed our Explorers, you can make use of Ipywidgets to string together your own cube plotting process.
-   We have provided some `developer documentation <write_your_own/intro.html>`_ illustrating how to use IPywidgets to build a work flow as general or as specialized as you need.
-   This could be useful if you have a specific combination of plots which you use frequently and repeatedly.
+   You can construct your own cube plotting explorer in the same way that we have constructed ours.
+   We have provided some `developer documentation <write_your_own/intro.html>`_ illustrating how to use widgets to achieve this.
+   This could be useful if you have a combination of plots you wish to use frequently and repeatedly.
 
    Here is the `source code <https://github.com/SciTools/cube_browser/blob/master/lib/cube_browser/explorer.py>`_ for the Cube Explorer we have provided.
+
 
 Installation
 ____________
