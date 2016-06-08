@@ -1,5 +1,8 @@
-Cube Browser Connections
-========================
+Cube Explorer Connections
+=========================
+
+To run a notebook with multiple options widgets, it is often convenient to connect the components.  This allows the widgets to automatically update selection changes.
+Subsequently, if you wanted to retrospectively change a selection, you would not have to re-run any cells.
 
 Composing Connections
 ---------------------
