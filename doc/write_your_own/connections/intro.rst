@@ -32,7 +32,7 @@ Links to Notebooks:
 
 :download:`Simple File Picker <filePickerSimple.ipynb>`
 
-:download:`Interactions <interactions_1.ipynb>`
+:download:`Interactions <interactions.ipynb>`
 
 
 
