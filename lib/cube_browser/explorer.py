@@ -14,7 +14,6 @@ import cube_browser
 # Clear output, such as autosave disable notification.
 IPython.display.clear_output()
 
-
 class FilePicker(object):
     """
     File picker widgets.
@@ -22,7 +21,7 @@ class FilePicker(object):
     def __init__(self, initial_value=''):
         if initial_value == '':
             try:
-                initial_value = iris.sample_data_path('GloSea4')
+                initial_value = iris.sample_data_path('')
             except ValueError:
                 initial_value = ''
         # Define the file system path for input files.
@@ -33,15 +32,15 @@ class FilePicker(object):
         # Observe the path.
         self._path.observe(self._handle_path, names='value')
         # Use default path value to initialise file options.
-        self._file_options = []
+        options = []
         if os.path.exists(self._path.value):
-            self._file_options = glob.glob('{}/*'.format(self._path.value))
-            self._file_options.sort()
+            options = glob.glob('{}/*'.format(self._path.value))
+            options.sort()
         # Defines the files selected to be loaded.
         self._files = ipywidgets.SelectMultiple(
             description='Files:',
             options=OrderedDict([(os.path.basename(f), f)
-                                 for f in self._file_options]),
+                                 for f in options]),
             width="100%"
         )
         self._box = ipywidgets.Box(children=[self._path, self._files],
@@ -59,7 +58,7 @@ class FilePicker(object):
             options.sort()
             self._files.value = ()
             self._files.options = OrderedDict([(os.path.basename(f), f)
-                                               for f in self._file_options])
+                                               for f in options])
         else:
             self._files.options = OrderedDict()
 
@@ -269,6 +268,8 @@ class Explorer(traitlets.HasTraits):
                 coords = [pc_x_name, pc_y_name]
                 confs.append(plot_type.value(cube, ax, coords=coords,
                                              **pc.mpl_kwargs))
+                title = cube.name().replace('_', ' ').capitalize()
+                ax.set_title(title)
         self.browser = cube_browser.Browser(confs)
         self.browser.on_change(None)
         # For each PlotControl, assign the plot's mpl_kwargs back to

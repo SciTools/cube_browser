@@ -10,6 +10,7 @@ import IPython
 from IPython.display import set_matplotlib_formats
 
 import ipywidgets
+import iris
 from iris.coords import Coord, DimCoord
 import iris.plot as iplt
 import matplotlib.pyplot as plt
@@ -25,6 +26,9 @@ if ipynb is not None:  # pragma: no cover
     ipynb.magic(u"%matplotlib nbagg")
     ipynb.magic(u"%autosave 0")
 
+# set iris Future switches
+iris.FUTURE.netcdf_promote = True
+iris.FUTURE.strict_grib_load = True
 
 class _AxisAlias(namedtuple('_AxisAlias', 'dim, name, size')):
     def __eq__(self, other):
