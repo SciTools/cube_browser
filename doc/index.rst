@@ -42,7 +42,7 @@ If you have never used Conda before, you will need to follow these `quick instal
 
 Once you have done this, open a terminal and type:
 
-``conda install -c scitools -c conda-forge -c scitools/label/dev cube_browser``
+``conda install -c scitools -c conda-forge -c scitools/label/dev python=2.7 cube_browser``
 
 This will install Cube Browser with the specific requirements necessary to run it.
 
