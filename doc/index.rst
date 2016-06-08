@@ -36,24 +36,15 @@ ____________
 
 In the following pages you will find downloads of Jupyter notebooks containing Cube Browser operations.
 To be able to use these notebooks, you will need to configure your environment correctly.
-The most efficient and clean method to do this is to use a Conda environment (please see Anaconda website for help and information).
+The most efficient and clean method to do this is to use a Conda environment.
 
 If you have never used Conda before, you will need to follow these `quick installation instructions <http://conda.pydata.org/docs/install/quick.html>`_ to get started.
 
 Once you have done this, open a terminal and type:
 
-``conda create -n cb -c scitools``
+``conda install -c scitools -c conda-forge -c scitools/label/dev cube_browser``
 
-This will create your environment to the specific requirements necessary to run Cube Browser.
-To activate that environment, if you are using a Windows machine, type:
-
-``activate cb``
-
-Alternatively, if you are using Linux, type:
-
-``source activate cb``
-
-*Please Note:* When you wish to use Cube Browser, you must initiate a notebook from a terminal in which the cb environment is active.
+This will install Cube Browser with the specific requirements necessary to run it.
 
 
 Support
