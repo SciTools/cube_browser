@@ -13,6 +13,8 @@ Links to Cube Explorers
 
 :download:`Click here to download the notebook <explore.ipynb>`
 
+You can see a demonstration version of explorer via the mybinder service.  This is freely hosted by generous people, but it is not fast and you should not load your own data into the sessions; it uses Iris sample data instead: `mybinder cube_browser <http://mybinder.org/repo/scitools/cube_browser/doc/explorers/explore.ipynb>`_.
+	  
 Usage
 -----
 

@@ -25,13 +25,23 @@ Follow the links below to view some examples of widgets which could be used as c
 
 :download:`Text Input Box <ValueCatcher.ipynb>`
 
+`mybinder Text Input Box <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/ValueCatcher.ipynb>`_.
+
 :download:`Toggle Button Menu <DimPicker1.ipynb>`
+
+`mybinder Toggle Button Menu <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/DimPicker1.ipynb>`_.
 
 :download:`Radio Button Menu <DimPicker2.ipynb>`
 
+`mybinder Radio Button Menu <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/DimPicker2.ipynb>`_.
+
 :download:`Dropdown Menu <DimPicker3.ipynb>`
 
+`mybinder Dropdown Menu <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/DimPicker3.ipynb>`_.
+
 :download:`Plot Type Selector (Dropdown) <iplotPicker.ipynb>`
+
+`mybinder Plot Type Selector <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/iplotPicker.ipynb>`_.
 
 
 **Construct one widget per cell**
@@ -51,6 +61,8 @@ It is convenient to make a button to achieve this (see button example below) as 
 
 :download:`Plotting Button <Button.ipynb>`
 
+`mybinder Plotting Button <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/Button.ipynb>`_.
+
 
 Usage
 -----
@@ -64,7 +76,11 @@ This is important if you have any dependencies between widgets (see following no
 
 :download:`Options List <OptionsCascade.ipynb>`
 
+`mybinder Options List <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/OptionsCascade.ipynb>`_.
+
 :download:`Selection Process <Workflow1.ipynb>`
+
+`mybinder Selection Process <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/Workflow1.ipynb>`_.
 
 
 Linking up your Widgets
