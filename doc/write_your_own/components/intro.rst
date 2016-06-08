@@ -14,7 +14,7 @@ The syntax to create each widget is very similar, but some small aspects (like t
     x_selector = ipywidgets.ToggleButtons(
                         description='Dimension:',
                         options=coordinates,
-                        value = 'time')
+                        value='time')
 
 In this example, the ``x_selector`` widget could be used to provide the user with the option to select which dimension to plot on the x-axis (by default this would be 'time').
 
@@ -36,7 +36,7 @@ Follow the links below to view some examples of widgets which could be used as c
 
 **Construct one widget per cell**
 
-Once you have decided what options and widgets you would like to present you can treat them as your individual components by containing each one in a single Jupyter notebook cell.
+Once you have decided which options and widgets you would like to present you can treat them as your individual components by containing each one in a single Jupyter notebook cell.
 Each component can be displayed using this line at the bottom of the cell::
 
     IPython.display.display()
