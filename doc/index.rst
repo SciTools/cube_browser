@@ -5,7 +5,9 @@ Introduction
 ____________
 
 Cube Browser is a Python package that makes it quicker and easier to plot and explore your Iris cube data.
-The package makes use of IPython widgets (otherwise known as ipywidgets) for several aspects of plotting, including the use of sliders to browse through slices of data in your plot.
+The package allows you to view your data in a user-friendly interactive interface that you can customize as you require.
+
+Cube Browser incorporates Ipython widgets (`ipywidgets <http://ipywidgets.readthedocs.io/en/latest/examples/Widget%20Basics.html>`_) for plotting, including the use of sliders to browse through slices of data in your plot.
 
 There are three different ways which you can use Cube Browser:
 
