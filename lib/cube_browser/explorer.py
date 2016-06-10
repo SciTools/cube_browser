@@ -3,8 +3,10 @@ import glob
 import os
 
 import IPython.display
+import cartopy.crs as ccrs
 import ipywidgets
 import iris
+import iris.plot as iplt
 import matplotlib.pyplot as plt
 import traitlets
 
@@ -258,9 +260,8 @@ class Explorer(traitlets.HasTraits):
                 x_name = cube.coord(axis='X').name()
                 y_name = cube.coord(axis='Y').name()
                 if x_name == pc_x_name and y_name == pc_y_name:
-                    projection = cube.coord_system().as_cartopy_projection()
-                    ax = fig.add_subplot(sub_plots + spl,
-                                         projection=projection)
+                    proj = iplt.default_projection(cube) or ccrs.PlateCarree()
+                    ax = fig.add_subplot(sub_plots + spl, projection=proj)
                     ax.coastlines()
                 else:
                     ax = plt.gca()
