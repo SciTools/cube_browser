@@ -5,6 +5,10 @@ Cube Browser
 
 [![Throughput Graph](https://graphs.waffle.io/SciTools/cube_browser/throughput.svg)](https://waffle.io/SciTools/cube_browser/metrics/throughput) 
 
+
+Introduction
+------------
+
 Working with Jupyter Notebooks to interactively visualise Iris cubes.
 
 To read the docs locally, run with an http server, e.g:
@@ -15,3 +19,9 @@ To read the docs locally, run with an http server, e.g:
 To fetch submodules within a branch, run:
 
     git submodule update --init
+
+
+Want to know more?
+------------------
+
+You can view the full Cube Browser documentation at http://scitools.github.io/cube_browser/.
