@@ -46,7 +46,10 @@ class FilePicker(object):
                                  for f in options]),
             width="100%"
         )
-        self._box = ipywidgets.Box(children=[self._path, self._files],
+        self.deleter = ipywidgets.Button(description='delete tab',
+                                         height='32px', width='75px')
+        self._box = ipywidgets.Box(children=[self._path,
+                                             ipywidgets.HBox(children=[self._files, self.deleter])],
                                    width="100%")
 
     @property
@@ -152,7 +155,10 @@ class Explorer(traitlets.HasTraits):
     _cubes = traitlets.List()
 
     def __init__(self):
-        self.file_pickers = [FilePicker()]
+        # should we be 'getting' a file, or a list of files,
+        # and making one, or multiple pickers if required??
+        default_path = os.environ.get('CUBE_BROWSER_DEFAULT_PATH', '')
+        self.file_pickers = [FilePicker(default_path)]
         # Load action.
         self._load_button = ipywidgets.Button(description="load these files")
         self._load_button.on_click(self._handle_load)
@@ -230,17 +236,30 @@ class Explorer(traitlets.HasTraits):
 
     def _handle_load(self, sender):
         """Load button action."""
+        sender.description = 'loading......'
         fpfs = [fp.files for fp in self.file_pickers]
         selected_files = reduce(list.__add__, (list(files) for files in fpfs))
         self._cubes = iris.load(selected_files)
         self.update_cubes_list()
+        sender.description = 'files loaded, reload'
 
     def _handle_new_tab(self, sender):
         """Add new file tab."""
-        self.file_pickers.append(FilePicker())
+        self.file_pickers.append(FilePicker(default_path))
+        self._update_filepickers()
+
+    def _update_filepickers(self):
         children = [fp.box for fp in self.file_pickers]
+        for i, child in enumerate(children):
+            fp.deleter.index = i
+            fp.deleter.on_click(self._handle_delete_tab)
         self.ftabs = ipywidgets.Tab(children=children)
         self._file_picker_tabs.children = [self.ftabs, self.bbox]
+
+    def _handle_delete_tab(self, sender):
+        """remove a file tab"""
+        self.file_pickers.pop(sender.index)
+        self._update_filepickers()        
 
     def _goplot(self, sender):
         """Create the cube_browser.Plot2D and cube_browser.Browser"""
