@@ -431,7 +431,7 @@ class Contourf(Plot2D):
     """
     def draw(self, cube):
         self.element = iplt.contourf(cube, axes=self.axes, coords=self.coords,
-                                     **self.kwargs)
+                                     extend='both', **self.kwargs)
         if 'levels' not in self.kwargs:
             self.kwargs['levels'] = self.element.levels
         return self.element
