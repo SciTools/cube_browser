@@ -123,13 +123,15 @@ class PlotControl(object):
             for i in range(ndims):
                 options.append(('dim{}'.format(i), i))
             self.x_coord.options = options
-            if (cube.coord(axis='X', dim_coords=True).name() in
-               [o[1] for o in self.x_coord.options]):
+            if (cube.coords(axis='X', dim_coords=True) and
+                cube.coord(axis='X', dim_coords=True).name() in
+                [o[1] for o in self.x_coord.options]):
                 default = cube.coord(axis='X', dim_coords=True).name()
                 self.x_coord.value = default
             self.y_coord.options = options
-            if (cube.coord(axis='Y', dim_coords=True).name() in
-               [o[1] for o in self.y_coord.options]):
+            if (cube.coords(axis='Y', dim_coords=True) and
+                cube.coord(axis='Y', dim_coords=True).name() in
+                [o[1] for o in self.y_coord.options]):
                 default = cube.coord(axis='Y', dim_coords=True).name()
                 self.y_coord.value = default
 

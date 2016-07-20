@@ -413,9 +413,44 @@ class Plot2D(object):
         emsg = '{!r} requires a draw method for rendering.'
         raise NotImplementedError(emsg.format(type(self).__name__))
 
-    def legend(self, mappable, axes):
-        # http://stackoverflow.com/questions/30030328/correct-placement-of-colorbar-relative-to-geo-axes-cartopy/30077745#30077745
-        pass
+    def legend(self, mappable):#, axes):
+
+        fig = plt.gcf()
+        posn = self.axes.get_position()
+        extent = self.axes.get_extent()
+        aspect = (extent[1] - extent[0]) / (extent[3] - extent[2])
+
+        self.cb_depth = 0.02
+        self.cb_sep = 0.01
+        if aspect < 1.2:
+            self.cbar_ax = fig.add_axes([posn.x1 + self.cb_sep, posn.y0,
+                                         self.cb_depth, posn.height])
+            plt.colorbar(mappable, ax=self.axes, orientation='vertical',
+                         cax=self.cbar_ax)
+
+        else:
+            self.cbar_ax = fig.add_axes([posn.x0, posn.y0 - 6*self.cb_sep,
+                                         posn.width, 2*self.cb_depth])
+            plt.colorbar(mappable, ax=self.axes, orientation='horizontal',
+                         cax=self.cbar_ax)
+
+        fig.canvas.mpl_connect('resize_event', self.resize_colourbar)
+        self.resize_colourbar(None)
+
+
+    def resize_colourbar(self, event):
+        # Ensure axes position is up to date.
+        self.axes.apply_aspect()
+        posn = self.axes.get_position()
+        extent = self.axes.get_extent()
+        aspect = (extent[1] - extent[0]) / (extent[3] - extent[2])
+        if aspect < 1.2:
+            self.cbar_ax.set_position([posn.x1 + self.cb_sep, posn.y0,
+                                       self.cb_depth, posn.height])
+        else:
+            self.cbar_ax.set_position([posn.x0, posn.y0 - 6*self.cb_sep,
+                                       posn.width, 2*self.cb_depth])
+        plt.draw()
 
 
 class Contourf(Plot2D):
@@ -443,8 +478,8 @@ class Contourf(Plot2D):
             for collection in self.element.collections:
                 collection.remove()
 
-    def legend(self, mappable, axes):
-        plt.colorbar(mappable, ax=axes, orientation='horizontal')
+    # def legend(self, mappable, axes):
+    #     plt.colorbar(mappable, ax=axes, orientation='horizontal')
 
 
 class Contour(Plot2D):
@@ -470,8 +505,8 @@ class Contour(Plot2D):
             for collection in self.element.collections:
                 collection.remove()
 
-    def legend(self, mappable, axes):
-        plt.colorbar(mappable, ax=axes, orientation='horizontal')
+    # def legend(self, mappable, axes):
+    #     plt.colorbar(mappable, ax=axes, orientation='horizontal')
         # labels = self.kwargs['levels']
         # for c, l in zip(mappable.collections, labels):
         #     c.set_label(l)
@@ -507,8 +542,8 @@ class Pcolormesh(Plot2D):
         if self.element is not None:
             self.element.remove()
 
-    def legend(self, mappable, axes):
-        plt.colorbar(mappable, ax=axes, orientation='horizontal')
+    # def legend(self, mappable, axes):
+    #     plt.colorbar(mappable, ax=axes, orientation='horizontal')
 
 
 class Browser(object):
@@ -653,10 +688,9 @@ class Browser(object):
                 if names is not None:
                     kwargs = {name: slider_by_name[name].value
                               for name in names}
-                    # plot(**kwargs)
                     mappable = plot(**kwargs)
                     if legend:
-                        plot.legend(mappable, plot.axes)
+                        plot.legend(mappable)#, plot.axes)
 
         slider_by_name = self._slider_by_name
         if change is None:

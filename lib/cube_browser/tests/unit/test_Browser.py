@@ -301,6 +301,7 @@ class Test_on_change(tests.IrisTest):
         self.patch('ipywidgets.HBox')
         self.patch('ipywidgets.Label')
         self.patch('matplotlib.pyplot.colorbar')
+        self.patch('cube_browser.Plot2D.legend')
 
     def test(self):
         plot = Contour(self.cube, self.axes)
