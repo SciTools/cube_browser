@@ -413,7 +413,7 @@ class Plot2D(object):
         emsg = '{!r} requires a draw method for rendering.'
         raise NotImplementedError(emsg.format(type(self).__name__))
 
-    def legend(self, mappable):#, axes):
+    def legend(self, mappable):
 
         fig = plt.gcf()
         posn = self.axes.get_position()
@@ -478,9 +478,6 @@ class Contourf(Plot2D):
             for collection in self.element.collections:
                 collection.remove()
 
-    # def legend(self, mappable, axes):
-    #     plt.colorbar(mappable, ax=axes, orientation='horizontal')
-
 
 class Contour(Plot2D):
     """
@@ -504,14 +501,6 @@ class Contour(Plot2D):
         if self.element is not None:
             for collection in self.element.collections:
                 collection.remove()
-
-    # def legend(self, mappable, axes):
-    #     plt.colorbar(mappable, ax=axes, orientation='horizontal')
-        # labels = self.kwargs['levels']
-        # for c, l in zip(mappable.collections, labels):
-        #     c.set_label(l)
-        # axes.legend(bbox_to_anchor=(-.2, -.1))
-        # axes.legend(loc='lower left')
 
 
 class Pcolormesh(Plot2D):
@@ -541,9 +530,6 @@ class Pcolormesh(Plot2D):
     def clear(self):
         if self.element is not None:
             self.element.remove()
-
-    # def legend(self, mappable, axes):
-    #     plt.colorbar(mappable, ax=axes, orientation='horizontal')
 
 
 class Browser(object):
@@ -690,7 +676,7 @@ class Browser(object):
                               for name in names}
                     mappable = plot(**kwargs)
                     if legend:
-                        plot.legend(mappable)#, plot.axes)
+                        plot.legend(mappable)
 
         slider_by_name = self._slider_by_name
         if change is None:
