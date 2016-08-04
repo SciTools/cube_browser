@@ -11,6 +11,7 @@ Cube Browser incorporates Ipython widgets (`ipywidgets <http://ipywidgets.readth
 
 There are three different ways which you can use Cube Browser:
 
+.. image:: _images/explore.png
 
 1. **Using Cube Explorer:**
 

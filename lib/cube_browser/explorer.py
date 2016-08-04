@@ -177,16 +177,16 @@ class Explorer(traitlets.HasTraits):
     """
     _cubes = traitlets.List()
 
-    def __init__(self, url):
-
-        o = urlparse(url)
-        query = parse_qs(o.query)
+    def __init__(self, url=''):
         self.file_pickers = []
-        pwd, = query.get('pwd', [''])
-        for fname in query.get('files', []):
-            self.file_pickers.append(FilePicker(pwd, os.path.join(pwd, fname)))
-        for fpath in query.get('folders', []):
-            self.file_pickers.append(FilePicker(fpath))
+        if url:
+            o = urlparse(url)
+            query = parse_qs(o.query)
+            pwd, = query.get('pwd', [''])
+            for fname in query.get('files', []):
+                self.file_pickers.append(FilePicker(pwd, os.path.join(pwd, fname)))
+            for fpath in query.get('folders', []):
+                self.file_pickers.append(FilePicker(fpath))
         if not self.file_pickers:
             self.file_pickers.append(FilePicker())
 
@@ -322,7 +322,7 @@ class Explorer(traitlets.HasTraits):
     def _goplot(self, sender):
         """Create the cube_browser.Plot2D and cube_browser.Browser"""
         IPython.display.clear_output()
-        fig = plt.figure(figsize=(12, 6))
+        fig = plt.figure(figsize=(16, 7))
         sub_plots = 110
         if self._subplots.value == 2:
             sub_plots = 120
