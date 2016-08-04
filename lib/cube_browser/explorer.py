@@ -1,6 +1,12 @@
 from collections import OrderedDict
 import glob
 import os
+try:
+    # Python 3
+    from urllib.parse import urlparse, parse_qs
+except ImportError:
+    # Python 2
+    from urlparse import urlparse, parse_qs
 
 import IPython.display
 import cartopy.crs as ccrs
@@ -12,7 +18,6 @@ import traitlets
 
 import cube_browser
 
-
 # Clear output, such as autosave disable notification.
 IPython.display.clear_output()
 
@@ -21,7 +26,7 @@ class FilePicker(object):
     """
     File picker widgets.
     """
-    def __init__(self, initial_value=''):
+    def __init__(self, initial_value='', default=''):
         if initial_value == '':
             try:
                 initial_value = iris.sample_data_path('')
@@ -39,11 +44,18 @@ class FilePicker(object):
         if os.path.exists(self._path.value):
             options = glob.glob('{}/*'.format(self._path.value))
             options.sort()
+        default_list = []
+        for default_value in default.split(','):
+            if default_value in options:
+                default_list.append(default_value)
+        default_tuple = tuple(default_list)
+
         # Defines the files selected to be loaded.
         self._files = ipywidgets.SelectMultiple(
             description='Files:',
             options=OrderedDict([(os.path.basename(f), f)
                                  for f in options]),
+            value=default_tuple,
             width="100%"
         )
         self.deleter = ipywidgets.Button(description='delete tab',
@@ -66,6 +78,7 @@ class FilePicker(object):
                                                for f in options])
         else:
             self._files.options = OrderedDict()
+        self._files.width = "100%"
 
     @property
     def box(self):
@@ -123,12 +136,14 @@ class PlotControl(object):
             for i in range(ndims):
                 options.append(('dim{}'.format(i), i))
             self.x_coord.options = options
-            if (cube.coord(axis='X', dim_coords=True).name() in
+            if (cube.coords(axis='X', dim_coords=True) and
+               cube.coord(axis='X', dim_coords=True).name() in
                [o[1] for o in self.x_coord.options]):
                 default = cube.coord(axis='X', dim_coords=True).name()
                 self.x_coord.value = default
             self.y_coord.options = options
-            if (cube.coord(axis='Y', dim_coords=True).name() in
+            if (cube.coords(axis='Y', dim_coords=True) and
+               cube.coord(axis='Y', dim_coords=True).name() in
                [o[1] for o in self.y_coord.options]):
                 default = cube.coord(axis='Y', dim_coords=True).name()
                 self.y_coord.value = default
@@ -162,10 +177,18 @@ class Explorer(traitlets.HasTraits):
     """
     _cubes = traitlets.List()
 
-    def __init__(self):
-        # Use the environment variable for the default path, if set.
-        self.default_path = os.environ.get('CUBE_BROWSER_DEFAULT_PATH', '')
-        self.file_pickers = [FilePicker(self.default_path)]
+    def __init__(self, url=''):
+        self.file_pickers = []
+        if url:
+            o = urlparse(url)
+            query = parse_qs(o.query)
+            pwd, = query.get('pwd', [''])
+            for fname in query.get('files', []):
+                self.file_pickers.append(FilePicker(pwd, os.path.join(pwd, fname)))
+            for fpath in query.get('folders', []):
+                self.file_pickers.append(FilePicker(fpath))
+        if not self.file_pickers:
+            self.file_pickers.append(FilePicker())
 
         # Define load action.
         self._load_button = ipywidgets.Button(description="load these files")
@@ -299,7 +322,7 @@ class Explorer(traitlets.HasTraits):
     def _goplot(self, sender):
         """Create the cube_browser.Plot2D and cube_browser.Browser"""
         IPython.display.clear_output()
-        fig = plt.figure(figsize=(12, 6))
+        fig = plt.figure(figsize=(16, 7))
         sub_plots = 110
         if self._subplots.value == 2:
             sub_plots = 120
@@ -313,8 +336,16 @@ class Explorer(traitlets.HasTraits):
             if cube and spl <= self._subplots.value:
                 pc_x_name = pc.x_coord.value
                 pc_y_name = pc.y_coord.value
-                x_name = cube.coord(axis='X', dim_coords=True).name()
-                y_name = cube.coord(axis='Y', dim_coords=True).name()
+                x_coords = cube.coords(axis='X', dim_coords=True)
+                if len(x_coords) == 1:
+                    x_name = x_coords[0].name()
+                else:
+                    x_name = None
+                y_coords = cube.coords(axis='Y', dim_coords=True)
+                if len(y_coords) == 1:
+                    y_name = y_coords[0].name()
+                else:
+                    y_name = None
                 if x_name == pc_x_name and y_name == pc_y_name:
                     proj = iplt.default_projection(cube) or ccrs.PlateCarree()
                     ax = fig.add_subplot(sub_plots + spl, projection=proj)

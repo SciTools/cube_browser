@@ -10,9 +10,9 @@ Example Notebooks
 The example described below shows how to plot a single cube on a single set of axes, but you can also use Cube Browser to make combinations of plots, for example side-by-side plots or overlays.
 The links below are examples of how you can achieve these.
 
-`four-axes example <http://mybinder.org/repo/scitools/cube_browser/doc/browsing_cubes/four_axes.ipynb>`_.
+`four-axes example <http://mybinder.org/repo/scitools/cube_browser/tree/doc/browsing_cubes/four_axes.ipynb>`_.
 
-`overlay example <http://mybinder.org/repo/scitools/cube_browser/doc/browsing_cubes/overlay.ipynb>`_
+`overlay example <http://mybinder.org/repo/scitools/cube_browser/tree/doc/browsing_cubes/overlay.ipynb>`_
 
 Writing a new Notebook
 ----------------------

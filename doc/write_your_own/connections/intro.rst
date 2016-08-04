@@ -32,11 +32,11 @@ Links to Notebooks:
 
 :download:`Simple File Picker <filePickerSimple.ipynb>`
 
-`mybinder Simple File Picker <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/connections/filePickerSimple.ipynb>`_.
+`mybinder Simple File Picker <http://mybinder.org/repo/scitools/cube_browser/tree/doc/write_your_own/connections/filePickerSimple.ipynb>`_.
 
 :download:`Interactions <interactions.ipynb>`
 
-`mybinder Interactions <http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/connections/interactions.ipynb>`_.
+`mybinder Interactions <http://mybinder.org/repo/scitools/cube_browser/tree/doc/write_your_own/connections/interactions.ipynb>`_.
 
 
 

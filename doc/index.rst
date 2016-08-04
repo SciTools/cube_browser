@@ -11,12 +11,13 @@ Cube Browser incorporates Ipython widgets (`ipywidgets <http://ipywidgets.readth
 
 There are three different ways which you can use Cube Browser:
 
+.. image:: _images/explore.png
 
 1. **Using Cube Explorer:**
 
    You can use our ready-made Cube Explorers to choose and plot your Iris cubes.
    This is an interactive Graphical User Interface, which is available to :download:`download <explorers/explore.ipynb>`
-   You can see a demonstration version of explorer via the mybinder service.  This is freely hosted by generous people, but it is not fast and you should not load your own data into the sessions; it uses Iris sample data instead: `mybinder Cube Explorer <http://mybinder.org/repo/scitools/cube_browser/doc/explorers/explore.ipynb>`_.
+   You can see a demonstration version of explorer via the mybinder service.  This is freely hosted by generous people, but it is not fast and you should not load your own data into the sessions; it uses Iris sample data instead: `mybinder Cube Explorer <http://mybinder.org/repo/scitools/cube_browser/tree/doc/explorers/explore.ipynb>`_.
 
 
 2. **Browsing cubes:**
