@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 
 # Cube-browser version.
-__version__ = '1.1.0-dev'
+__version__ = '1.1.0'
 
 
 # Set default IPython magics if an IPython session has invoked the import.
