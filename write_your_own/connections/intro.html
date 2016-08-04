@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                v1.0
+                v1.1
               </div>
             
           
@@ -148,15 +148,11 @@
 <div class="section" id="composing-connections">
 <h2>Composing Connections<a class="headerlink" href="#composing-connections" title="Permalink to this headline">¶</a></h2>
 <p>For widgets which possess hard coded options, the only elements you need are the list of input options and the widget itself.
-Widgets that depend on the response of previous selections need:</p>
-<blockquote>
-<div><ul class="simple">
-<li>An initial list of input options</li>
-<li>The widget itself</li>
-<li>A function defining what change occurs on selection change in an influencing widget</li>
-<li>A statement to observe the influencing widget and execute the function upon event of a change.</li>
-</ul>
-</div></blockquote>
+Widgets that depend on the response of previous selections need:
+- An initial list of input options
+- The widget itself
+- A function defining what change occurs on selection change in an influencing widget
+- A statement to observe the influencing widget and execute the function upon event of a change.</p>
 <p>When adding these elements to your notebook, you could also benefit from moving all your widgets into a single cell.
 Doing so means that the selection values will update without having to re-run all the cells that contain widgets.</p>
 <p>At this point you may wish to display your widgets in a group, rather than one by one.
@@ -170,9 +166,9 @@ You can do this by adding them to a display tool called a container and displayi
 <div class="section" id="links-to-notebooks">
 <h2>Links to Notebooks:<a class="headerlink" href="#links-to-notebooks" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference download internal" href="../../_downloads/filePickerSimple.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Simple</span> <span class="pre">File</span> <span class="pre">Picker</span></code></a></p>
-<p><a class="reference external" href="http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/filePickerSimple.ipynb">mybinder Simple File Picker</a>.</p>
+<p><a class="reference external" href="http://mybinder.org/repo/scitools/cube_browser/tree/doc/write_your_own/connections/filePickerSimple.ipynb">mybinder Simple File Picker</a>.</p>
 <p><a class="reference download internal" href="../../_downloads/interactions.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Interactions</span></code></a></p>
-<p><a class="reference external" href="http://mybinder.org/repo/scitools/cube_browser/doc/write_your_own/components/interactions.ipynb">mybinder Interactions</a>.</p>
+<p><a class="reference external" href="http://mybinder.org/repo/scitools/cube_browser/tree/doc/write_your_own/connections/interactions.ipynb">mybinder Interactions</a>.</p>
 </div>
 </div>
 
@@ -217,7 +213,7 @@ You can do this by adding them to a display tool called a container and displayi
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'v1.0.0',
+            VERSION:'v1.1.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
