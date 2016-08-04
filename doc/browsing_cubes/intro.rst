@@ -12,7 +12,11 @@ The links below are examples of how you can achieve these.
 
 `four-axes example <http://mybinder.org/repo/scitools/cube_browser/tree/doc/browsing_cubes/four_axes.ipynb>`_.
 
+.. image:: ../_images/four_axes.png
+
 `overlay example <http://mybinder.org/repo/scitools/cube_browser/tree/doc/browsing_cubes/overlay.ipynb>`_
+
+.. image:: ../_images/overlay.png
 
 Writing a new Notebook
 ----------------------
