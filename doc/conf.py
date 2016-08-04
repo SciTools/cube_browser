@@ -12,9 +12,9 @@ description = 'Browser based exploration of Iris cubes'
 
 
 # # The short X.Y version.
-version = u'v1.0'
+version = u'v1.1'
 # The full version, including alpha/beta/rc tags.
-release = u'v1.0.0'
+release = u'v1.1.0'
 
 # Override default theme
 import sphinx_rtd_theme
