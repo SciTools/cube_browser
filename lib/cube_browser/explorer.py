@@ -291,7 +291,7 @@ class Explorer(traitlets.HasTraits):
 
     def _handle_new_tab(self, sender):
         """Add new file tab."""
-        self.file_pickers.append(FilePicker(self.default_path))
+        self.file_pickers.append(FilePicker())
         self._update_filepickers()
 
     def _update_filepickers(self):
