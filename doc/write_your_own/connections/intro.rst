@@ -9,10 +9,10 @@ Composing Connections
 
 For widgets which possess hard coded options, the only elements you need are the list of input options and the widget itself.
 Widgets that depend on the response of previous selections need:
-    - An initial list of input options
-    - The widget itself
-    - A function defining what change occurs on selection change in an influencing widget
-    - A statement to observe the influencing widget and execute the function upon event of a change.
+- An initial list of input options
+- The widget itself
+- A function defining what change occurs on selection change in an influencing widget
+- A statement to observe the influencing widget and execute the function upon event of a change.
 
 When adding these elements to your notebook, you could also benefit from moving all your widgets into a single cell.
 Doing so means that the selection values will update without having to re-run all the cells that contain widgets.
